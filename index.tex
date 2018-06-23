@@ -1,0 +1,72 @@
+\documentclass[12pt,a4paper,draft]{scrreprt}
+
+% page layout
+\usepackage[total={136mm, 208mm}]{geometry}
+\usepackage[automark,headsepline,ilines,draft=false]{scrlayer-scrpage}
+
+% paragraph alignment
+\usepackage[defaultlines=4,all]{nowidow}
+\setlength{\parskip}{0.7em}
+
+% links
+\usepackage{hyperref}
+
+% source code formatting & highlighting
+\usepackage[draft=false,outputdir=dist]{minted}
+\usemintedstyle{manni}
+
+\newcommand{\code}{\mintinline{text}}
+
+% font families
+%\usepackage{palatino}
+\usepackage{fontspec}
+\setmonofont{FiraCode-Regular}
+\setminted{samepage,fontsize=\small}
+
+% floats
+\usepackage{float}
+
+% landscape page
+\usepackage{pdflscape}
+
+% figure numbering
+\usepackage{chngcntr}
+\counterwithout{figure}{chapter}
+
+% trees
+\usepackage{forest}
+
+% language
+\usepackage{csquotes}
+\usepackage[english]{babel}
+
+% bib
+\usepackage[backend=biber,style=alphabetic,citestyle=alphabetic,block=ragged]{biblatex}
+%\addbibresource{bib/manuals.bib}
+%\addbibresource{bib/papers.bib}
+%\addbibresource{bib/misc.bib}
+
+% footnotes
+%\usepackage[hang,multiple]{footmisc}
+% enable in floats
+%\usepackage{footnote}
+%\makesavenoteenv{figure}
+
+\begin{document}
+  \pagenumbering{gobble}
+  \input{titlepage.tex}
+
+  \tableofcontents
+  \newpage
+
+  \pagenumbering{arabic}
+
+  \input{abstract.tex}
+  \input{content/index.tex}
+
+  \clearpage
+  \addcontentsline{toc}{chapter}{Bibliography}
+  \printbibliography
+
+  \input{appendix.tex}
+\end{document}
