@@ -1,0 +1,48 @@
+\chapter{Abstract syntax trees}
+An \textit{abstract syntax tree (AST)} represents
+the syntactic structure of program source code.
+It is a datastructure used to
+store source code internally by various tools,
+such as compilers, code formatters, and
+integrated development environments.
+It can be built from the source code tokens using a \textit{parser}.
+Unlike a \textit{concrete syntax tree},
+an abstract syntax tree contains insufficient information
+to perform the inverse operation and
+recreate the original source code from the tree.
+\autocite{AstImplIdioms}
+
+Its \textit{vertices (nodes)} each store a node type,
+which can be discriminated upon
+in an implementation language-specific manner.
+Common examples for node types include
+\begin{itemize}
+  \item \textit{binary expressions},
+  \item \textit{identifiers}, and
+  \item \textit{literals}.
+\end{itemize}
+Vertices can also store additional attributes,
+depending on their type.
+Examples of additional attributes include
+\begin{itemize}
+  \item the \textit{operator} used in a binary expression
+  (although some AST formats instead use different node types
+  for different binary operations \autocite{AstImplIdioms}),
+  \item the \textit{name} of an identifier, and
+  \item the \textit{value} of a literal.
+\end{itemize}
+
+The edges are labeled to indicate
+the relation between parent and child nodes,
+with the parent node type determining
+which edge labels are allowed.
+Examples of edge labels include
+\begin{itemize}
+  \item the \textit{test} of an if statement,
+  \item its \textit{consequent}, and
+  \item its optional \textit{alternate} (`else block')
+\end{itemize}
+There may also be multiple ordered children
+connected to their parent with edges of the same label,
+such as the \textit{body} label
+for a \textit{block statement} parent.
