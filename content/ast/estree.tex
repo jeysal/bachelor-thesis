@@ -1,0 +1,84 @@
+\section{ESTree}
+We will use the ESTree AST format whenever we operate on ASTs.
+ESTree is the de facto community standard for ECMAScript ASTs,
+used in various popular tools, including
+the parsers `Acorn' and `Esprima',
+the linter ESLint, and
+the compiler Babel,
+which we will work with extensively.
+\autocite{EstreeSpec}
+
+The ESTree specification contains an interface for each node type,
+as well as abstract interfaces that others inherit from.
+All node type interfaces inherit --- directly or indirectly ---
+from the abstract \code{Node} interface: \autocite{EstreeSpec}
+\begin{minted}{javascript}
+interface Node {
+  type: string;
+  loc: SourceLocation | null;
+}
+\end{minted}
+The \code{loc} attribute contains information about
+the position of the source code section
+that corresponds to the AST node,
+but we can disregard it for now.
+The \code{type} attribute serves as the discriminator,
+with a unique value assigned to each node type
+that can be used to determine
+the concrete node type of a given node object.
+
+The \code{IfStatement} is an example
+of such a concrete node type:
+\autocite{EstreeSpec}
+\begin{minted}{javascript}
+interface IfStatement <: Statement {
+    type: "IfStatement";
+    test: Expression;
+    consequent: Statement;
+    alternate: Statement | null;
+}
+\end{minted}
+An instance of it
+with its corresponding source code
+is shown in Figure~\ref{fig:EstreeIfStmt}.
+\begin{figure}
+  Source code:
+  \begin{minted}{javascript}
+if (1 === 2) {
+  console.log(42);
+} else {
+  console.log(1337);
+}
+  \end{minted}
+	ESTree node:
+  \begin{minted}{json}
+{
+  "type": "IfStatement",
+  "start": 0,
+  "end": 65,
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 0
+    },
+    "end": {
+      "line": 5,
+      "column": 1
+    }
+  },
+  "test": {
+    "type": "BinaryExpression"
+  },
+  "consequent": {
+    "type": "BlockStatement"
+  },
+  "alternate": {
+    "type": "BlockStatement"
+  }
+}
+  \end{minted}
+  \caption{
+    An ESTree node for an if statement, serialized as JSON.
+    Its child nodes have been shortened; they include only the node types.
+  }\label{fig:EstreeIfStmt}
+\end{figure}
