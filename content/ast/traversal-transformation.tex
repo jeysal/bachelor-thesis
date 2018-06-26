@@ -173,3 +173,31 @@ of which there may be a large quantity,
 serving different purposes.
 While traversing the tree we can now apply each visitor
 (or a list of visitors) to each node.
+
+\subsection{Transformation}
+Our strict equality swap visitor will only apply to \code{BinaryExpression}s,
+of which strict equality comparison expressions are a subset.
+We filter any other kind of binary operation;
+only for strict equality comparisons we swap the
+left subexpression with the right one:
+\begin{minted}{javascript}
+if (node.operator === '===') {
+  [node.left, node.right] = [node.right, node.left];
+}
+\end{minted}
+
+Other common transformations include
+\autocite{BabelPluginHandbook}
+\begin{itemize}
+  \item replacing a node with a new node
+    (that is still valid with regard to its parent),
+    \begin{itemize}
+      \item in particular,
+        wrapping a node into another node
+        by replacing it with a new node
+        that has the old one as its child,
+    \end{itemize}
+  \item inserting a sibling node,
+  \item removing a node, and
+  \item renaming a binding.
+\end{itemize}
