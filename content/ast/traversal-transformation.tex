@@ -1,0 +1,175 @@
+\section{Traversal and transformation}
+In the following, we will illustrate
+how an AST can be traversed and transformed
+by defining a simple example transformation.
+We will swap the sides of each
+\textit{strict equality comparison} (\code{===})
+that occurs in the tree.
+The node objects that we operate on
+are shaped as defined by the ESTree specification.
+
+\subsection{Traversal}
+In object-oriented languages,
+different tree node types are represented as
+different classes that directly or indirectly
+implement the \code{Node} interface.
+There are multiple ways to navigate the tree,
+each resulting in a distinct order of node occurence.
+The most common algorithms for tree traversal in general are
+\begin{itemize}
+  \item \textit{Depth-first search (DFS)},
+  which can be performed
+  \begin{itemize}
+    \item \textit{Pre-order},
+    \item \textit{In-order}, or
+    \item \textit{Post-order}, and
+  \end{itemize}
+  \item \textit{Breadth-first search (BFS)}.
+\end{itemize}
+However, we can disregard the traversal order
+for our example transformation
+(and for the other transformations in this paper),
+because we will only modify single nodes
+regardless of the context they appear in,
+and we do not hold any state across nodes.
+
+Instead, we are interested in the structure of
+the code that manipulates AST nodes.
+There are multiple ways to switch between
+different actions depending on the
+type of the node we are currently processing.
+
+\paragraph{Type switching}
+The primitive approach shown in Figure~\ref{fig:TreeNodeTypeSwitching}
+is to simply switch between code paths depending on the node type,
+which we can retrieve from the \code{type} property
+--- or by using an \code{instanceof} operator
+with many other languages and AST formats.
+
+\begin{figure}
+  \begin{minted}{javascript}
+switch (node.type) {
+  case 'Identifier':
+    console.log(node.name);
+    break;
+  case 'Literal':
+    console.log(node.value);
+    break;
+  // ...
+  default:
+    throw new Error(`unknown node type '${node.type}'`);
+}
+  \end{minted}
+  \caption{
+    Switching between different node types.
+  }\label{fig:TreeNodeTypeSwitching}
+\end{figure}
+
+However, this approach is generally considered bad design
+in the world of \textit{object-oriented programming (OOP)},
+\autocite{VisitorPatternEssence}
+requires type casts in languages that are
+neither dynamic nor structurally-typed, and
+needs a fallback case instead of
+verifying that all types are covered at compile time.
+
+\paragraph{Abstract handler methods}
+An alternative approach that better adheres to
+\textit{object-oriented design (OOD)} principles
+is to define the handler method in the \code{Node} interface
+as shown in Figure~\ref{fig:TreeNodeAbstractHandlerMethods}.
+\autocite{VisitorPatternEssence}
+We implement it in each node type class
+and let the language dynamically dispatch for us.
+
+\begin{figure}
+  \begin{minted}{typescript}
+interface Node {
+  handle(): void;
+}
+
+class Identifier implements Node {
+  handle() {
+    console.log(this.name);
+  }
+}
+
+class Literal implements Node {
+  handle() {
+    console.log(this.value);
+  }
+}
+  \end{minted}
+  \caption{
+    Defining handlers on each node type.
+  }\label{fig:TreeNodeAbstractHandlerMethods}
+\end{figure}
+
+The major disadvantage of this approach is that
+all handlers must be defined on the node types themselves.
+This becomes impractical if we want to
+apply multiple transformations to the AST,
+each with their own node handler logic,
+or even if we just want to define multiple handlers
+for totally different operations on the tree,
+such as machine code generation, bytecode generation,
+tree serialization, and pretty-printing.
+
+\paragraph{Visitor pattern}
+The final and most popular approach is
+to employ the \textit{visitor pattern}
+as shown in Figure~\ref{fig:TreeNodeVisitorPattern}.
+\autocite{DesignPatterns}
+After dispatching to the \code{accept} method
+of the current node type,
+we further delegate to the \textit{visitor} object,
+which provides a method to handle each node type,
+including the one for the now well-known type
+of the current node \code{this}.
+
+\begin{figure}
+  \begin{minted}{typescript}
+interface Node {
+  accept(v: Visitor): void;
+}
+
+class Identifier implements Node {
+  accept(v: Visitor) {
+    v.visitIdentifier(this);
+  }
+}
+
+class Literal implements Node {
+  handle(v: Visitor) {
+    v.visitLiteral(this);
+  }
+}
+
+
+interface Visitor {
+  visitIdentifier(identifier: Identifier): void;
+  visitLiteral(literal: Literal): void;
+}
+
+class LogVisitor implements Visitor {
+  visitIdentifier(identifier: Identifier) {
+    console.log(identifier.name);
+  }
+
+  visitLiteral(literal: Literal) {
+    console.log(identifier.value);
+  }
+}
+  \end{minted}
+  \caption{
+    The visitor pattern.
+  }\label{fig:TreeNodeVisitorPattern}
+\end{figure}
+
+This approach is both immaculate OOD and
+fulfills the requirement to
+decouple the node types from their handlers,
+of which there may be a large quantity,
+serving different purposes.
+While traversing the tree we can now apply each visitor
+(or a list of visitors) to each node.
