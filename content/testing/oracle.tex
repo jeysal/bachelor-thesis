@@ -1,0 +1,26 @@
+\section{Test oracles}
+\textit{Test oracles} are the part of a test
+that determines whether the test
+has failed or succeeded.
+\autocite{HowdenTesting}
+In xUnit frameworks (such as xUnit.net, JUnit, and many more),
+they are typically encoded as \textit{assertions}.
+\autocite{MeszarosXUnit}
+There, they most commonly occur in test case bodies,
+but may also appear in other parts of the xUnit test structure,
+such as test fixture teardown functions
+to share an assertion across an entire test suite.
+
+Assertions verify that a logical expression,
+which is expected to be an \textit{invariant}
+at that point in the program,
+is indeed truthy during execution.
+If it is not,
+the assertion will cause the test to fail,
+usually by interrupting the control flow
+by means of throwing an exception:
+\begin{minted}{javascript}
+assert(1 === 1); // assert(invariant) is no-op
+assert(1 === 2); // throws an exception
+assert(2 === 2); // never executed
+\end{minted}
