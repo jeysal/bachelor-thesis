@@ -3,20 +3,20 @@ Many programming languages and standard libraries
 natively provide a mechanism for assertions
 in tests or sometimes even in production code
 through syntax features, such as Python's \code{assert} statement,
-\autocite[Chapter 7.3: The assert statement]{pythonLangRef}
+\autocite[Chapter 7.3: The assert statement]{PythonLangRef}
 or through functions, such as Node.js' \code{assert} module.
-\autocite[Chapter: Assert]{nodejsDoc}
+\autocite[Chapter: Assert]{NodejsDoc}
 
 In addition to those typically rather primitive helpers,
 there are many third-party libraries capable of
 intuitively performing more complex or specific assertions,
 as demonstrated by this \textit{Chai} snippet:
-\autocite[Chapter: API Reference --- Language Chains --- .not]{chaiBddDoc}
+\autocite[Chapter: API Reference --- Language Chains --- .not]{ChaiBddDoc}
 \begin{minted}{javascript}
 expect([1, 2]).to.be.an('array').that.does.not.include(3);
 \end{minted}
 Examples include asserting
-\autocite{chaiBddDoc}\autocite{javaHamcrestJavadoc}
+\autocite{ChaiBddDoc}\autocite{JavaHamcrestJavadoc}
 \begin{itemize}
   \item deep equality,
   \item regular expression matches,
