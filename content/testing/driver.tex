@@ -1,0 +1,23 @@
+\section{Test drivers}
+\textit{Test drivers} control the test execution from the outside.
+\autocite{TestingTheoryDriver}
+They can replace high-level system components that will
+at some point integrate the \textit{test subject},
+but have not yet been implemented,
+and thus they are particularly useful in conjunction with
+a bottom-up software development approach,
+where small components at the bottom of the hierarchy
+are first designed in their entirety
+and later integrated to form the software product as a whole.
+
+Test drivers need not replace a future system component.
+They can also be used in place of components that
+have already been implemented,
+if it is still desired that the components it depends on
+should be tested on their own.
+They can also be used in place of components that
+will never be implemented
+because they are out of scope for the system being developed,
+in particular if the test drivers replace the human users who interact
+with the top-level components of the system in production themselves.
+\autocite{ArtOfSoftwareTesting}
