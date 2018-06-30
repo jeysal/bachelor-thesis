@@ -1,0 +1,16 @@
+\section{Mocks}
+There is no clear consensus on the meaning and differentiation
+of the terms `stub' and `mock', however, a common definition
+--- and the one that we will use ---
+is that mocks extend stubs to
+not only answer to calls with predefined responses,
+but also to place equally predefinable assertions on
+the calls that the test subjects performs on the mock,
+\autocite{MocksArentStubs}
+thus becoming part of the test oracle.
+Many mocking libraries choose to
+not make a distinction at all in practice
+and have their mock objects act as
+dummies, fakes, stubs, spies and mocks
+--- however those may be distinguished --- at once.
+\autocite{SpockFrameworkDoc}\autocite{JestMockFunctions}
