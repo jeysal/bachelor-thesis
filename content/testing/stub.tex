@@ -1,9 +1,30 @@
 \section{Test stubs}
 \textit{Test stubs} are the inverse counterpart to test drivers.
 They replace components that the test subject depends on
-and provide canned answers to calls from the test subject to the stubbed component.
+and provide canned answers to calls from the test subject to the stubbed component
 \autocite{MocksArentStubs}
+as shown in Figure~\ref{fig:TestStub}.
 They are particularly useful in top-down software development,
 where the high-level components are implemented first
 and testing them requires stubs for their dependencies
 that are not yet implemented in full detail.
+
+\begin{figure}
+  \begin{minted}{javascript}
+const subtract = add => (a, b) => add(a, -b);
+
+const addStub = (a, b) => (a === 3 && b === -2 ? 1 : 0);
+
+assert(subtract(addStub)(3, 2) === 1);
+  \end{minted}
+  \caption{
+    In this somewhat contrived stubbing example,
+    the \code{add} function,
+    a dependency of the \code{subtract} function,
+    is being stubbed with the \code{addStub} function,
+    which does not actually perform any addition logic,
+    but instead only responds to a certain call with a canned answer.
+    This way, \code{subtract} is tested in isolation,
+    without an actual implementation of \code{add}.
+  }\label{fig:TestStub}
+\end{figure}
