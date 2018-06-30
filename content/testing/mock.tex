@@ -8,9 +8,57 @@ but also to place equally predefinable assertions on
 the calls that the test subjects performs on the mock,
 \autocite{MocksArentStubs}
 thus becoming part of the test oracle.
+Figure~\ref{fig:Mock} shows the same example as for stubs before,
+but using a mock that introduces an assertion
+on the behavior of the test subject.
 Many mocking libraries choose to
 not make a distinction at all in practice
 and have their mock objects act as
 dummies, fakes, stubs, spies and mocks
 --- however those may be distinguished --- at once.
 \autocite{SpockFrameworkDoc}\autocite{JestMockFunctions}
+
+\begin{figure}
+  \begin{minted}{javascript}
+const subtract = add => (a, b) => add(a, -b);
+
+const addCalls = [];
+const addMock = (a, b) => (
+  addCalls.push({ a, b }), a === 3 && b === -2 ? 1 : 0
+);
+
+assert(subtract(addMock)(3, 2) === 1);
+assert.deepStrictEqual(addCalls, [{ a: 3, b: -2 }]);
+  \end{minted}
+  \caption{
+    Using a mock to verify that \code{subtract}
+    actually made a call to \code{add}.
+    This would be considered a significant overspecification in practice.
+  }\label{fig:Mock}
+\end{figure}
+
+Figure~\ref{fig:MockLibrary} shows how a mocking library
+can greatly simplify the mocking example
+by eliminating the manual argument capturing from the test code
+and providing call verification helper functions.
+
+\begin{figure}
+  \begin{minted}{javascript}
+const subtract = add => (a, b) => add(a, -b);
+
+const addMock = jest.fn(
+  (a, b) => (a === 3 && b === -2 ? 1 : 0)
+);
+
+expect(subtract(addMock)(3, 2)).toBe(1);
+expect(addMock).toBeCalledWith(3, -2);
+  \end{minted}
+  \caption{
+    Getting rid of mocking boilerplate by using a mocking library,
+    in this example the one provided by the test runner \textit{Jest}.
+    \autocite{JestGithub}
+    Note that unlike the previous `vanilla' example,
+    this will allow additional calls to the mock
+    as long as the first one is performed with matching arguments.
+  }\label{fig:MockLibrary}
+\end{figure}
