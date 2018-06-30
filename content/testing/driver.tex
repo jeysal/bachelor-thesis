@@ -1,6 +1,7 @@
 \section{Test drivers}
-\textit{Test drivers} control the test execution from the outside.
+\textit{Test drivers} control the test execution from the outside
 \autocite{TestingTheoryDriver}
+as shown in Figure~\ref{fig:TestDriver}.
 They can replace high-level system components that will
 at some point integrate the \textit{test subject},
 but have not yet been implemented,
@@ -21,3 +22,24 @@ because they are out of scope for the system being developed,
 in particular if the test drivers replace the human users who interact
 with the top-level components of the system in production themselves.
 \autocite{ArtOfSoftwareTesting}
+
+\begin{figure}
+  \begin{minted}{javascript}
+import test from "ava";
+
+import add from "./add";
+
+test("adds two positive integers", t => {
+  t.is(add(1, 2), 3);
+});
+
+test("adds a positive and a negative integer", t => {
+  t.is(add(1, -2), -1);
+});
+  \end{minted}
+  \caption{
+    An example test driver that uses the testing framework AVA
+    \autocite{AvaGithub}
+    to execute two test cases for the test subject \code{add}.
+  }\label{fig:TestDriver}
+\end{figure}
