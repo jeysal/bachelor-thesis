@@ -13,3 +13,19 @@ The former are used to specify a part of the \textit{test oracle},
 deciding whether a test case is considered to pass successfully or fail with an error.
 The latter are particularly important for substituting subsystems in component testing,
 and mock expectations can also form another part of the test oracle.
+
+Assertions are often encoded as chained function calls,
+sometimes called \textit{BDD (behavior-driven development)} style,
+or in a more classical style as plain calls to an assertion function:
+\autocite{ChaiBddDoc}\autocite{ChaiTddDoc}
+\begin{minted}{javascript}
+expect(1).to.equal(1);
+assert(1 === 1);
+\end{minted}
+Stubbing and mocking libraries tend to follow a similar API design approach:
+\autocite{SinonStubDoc}\autocite{SinonMockDoc}
+\begin{minted}{javascript}
+const doubleStub = stub().withArgs(21).returns(42);
+const myMock = mock(myApi).expects("method")
+                          .once().withArgs(42, 1337);
+\end{minted}
