@@ -38,6 +38,9 @@ It defines a \textit{domain-specific language (DSL)} for the test cases
 that allows expressing assertions and stub / mock interactions in a very concise way.
 This DSL cannot be implemented entirely by a `userspace' library, therefore,
 Spock hooks into the compiler and transforms the syntax tree prior to test execution.
+We will touch on the basics of
+syntax tree traversal and transformation
+in Chapter~\ref{chap:Ast}.
 
 Spock allows expressing assertions in \code{expect} blocks,
 or alternatively in \code{when}-\code{then} blocks:
