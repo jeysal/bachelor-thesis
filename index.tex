@@ -1,5 +1,9 @@
 \documentclass[12pt,a4paper,draft]{scrreprt}
 
+% https://tex.stackexchange.com/questions/425600/latex-error-command-counterwithout-already-defined
+\let\counterwithout\relax
+\let\counterwithin\relax
+
 % page layout
 \usepackage[total={136mm, 208mm}]{geometry}
 \usepackage[automark,headsepline,ilines,draft=false]{scrlayer-scrpage}
