@@ -29,3 +29,11 @@ const doubleStub = stub().withArgs(21).returns(42);
 const myMock = mock(myApi).expects("method")
                           .once().withArgs(42, 1337);
 \end{minted}
+
+\paragraph{The Spock Framework DSL}
+The popular testing framework \textit{Spock Framework}
+for the Groovy programming language takes a different route.
+It defines a \textit{domain-specific language (DSL)} for the test cases
+that allows expressing assertions and stub / mock interactions in a very concise way.
+This DSL cannot be implemented entirely by a `userspace' library, therefore,
+Spock hooks into the compiler and transforms the syntax tree prior to test execution.
