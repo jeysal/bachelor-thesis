@@ -18,7 +18,22 @@ distinguished by the way they are implemented:
 \end{enumerate}
 
 \paragraph{Standalone DSLs}
-TODO
+Standalone DSLs are implemented by defining a wholly new
+lexical and syntactical grammar and the language semantics.
+One can then use a parser generator to obtain a parser for the language
+and include in in their software.
+
+The major disadvantages of this approach for a testing DSL are
+\begin{itemize}
+  \item that the language would have to be enormously complex
+    in order to be able to replace the regular Groovy language
+    \begin{itemize}
+      \item or it would have to be embedded in strings in the test cases, and
+    \end{itemize}
+  \item that there would be no tooling support for the language
+    that provides autocompletion, formatting, error checking, and other assistance
+    like there is for widespread existing languages.
+\end{itemize}
 
 \paragraph{Userspace DSLs}
 TODO
