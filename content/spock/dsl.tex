@@ -36,7 +36,21 @@ The major disadvantages of this approach for a testing DSL are
 \end{itemize}
 
 \paragraph{Userspace DSLs}
-TODO
+\textit{Userspace DSLs} have recently become popular.
+They are implemented entirely using features of the host language.
+In particular, some languages are explicitly designed to
+support the creation of DSLs well, such as
+Groovy \autocite{GroovyDslDoc}
+and, more recently,
+Kotlin \autocite{KotlinTypeSafeBuilderDoc}.
+Language features that can aid the creation of DSLs are
+\autocite{GroovyDslDoc}
+\begin{itemize}
+  \item optional parentheses around call arguments,
+  \item operator overloading,
+  \item closure delegates, and
+  \item compilation customization for advanced DSLs of the last category.
+\end{itemize}
 
 \paragraph{Custom compilation DSLs}
 TODO
