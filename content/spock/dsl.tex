@@ -53,4 +53,20 @@ Language features that can aid the creation of DSLs are
 \end{itemize}
 
 \paragraph{Custom compilation DSLs}
-TODO
+\textit{Custom compilation DSLs} also adhere to the syntax of an existing language,
+but they offer more flexibility, because they are not restricted to runtime language features.
+For example, labels in the code cannot be given additional semantics at runtime by a library,
+which is something that, as we will see, the Spock Framework needs to do.
+
+But unlike a standalone language,
+existing tools can still handle the code written in the custom compilation DSL,
+because all of it is valid code in the language it builds upon ---
+although some tools may be confused by the
+unorthodox usage of language features and become less helpful.
+
+The compile-time portion of the implementation of this kind of DSL
+primarily employs AST transformations,
+which we will learn about in Chapter~\ref{chap:Ast}.
+Groovy has extensive support for custom compilation and these transformations,
+\autocite[Chapter 3.15.6: Compilation customizers]{GroovyDoc}
+enabling the Spock Framework to implement its testing DSL cleanly.
