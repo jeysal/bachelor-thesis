@@ -1,0 +1,67 @@
+\begin{figure}
+  \begin{minted}[fontsize=\scriptsize]{groovy}
+class HelloSpockSpec extends Specification {
+  def 'expect'() {
+    expect:
+    1 + 2 == 3
+  }
+
+  def 'setup-cleanup'() {
+    setup:
+    final file = new File('/tmp/example')
+    file.createNewFile()
+    // ...
+    cleanup:
+    file.delete()
+  }
+
+  def 'when-then'() {
+    given:
+    final stack = new ArrayDeque<Integer>()
+
+    when:
+    stack.pop()
+
+    then:
+    thrown NoSuchElementException
+    stack.empty
+  }
+
+  def 'where'() {
+    expect:
+    Math.max(a, b) == r
+
+    where:
+    a | b || r
+    1 | 3 || 3
+    7 | 4 || 7
+    0 | 0 || 0
+  }
+
+  def 'stub'() {
+    // ...
+    setup:
+    subscriber0.receive(_) >> true
+    subscriber1.receive(_) >> true
+
+    expect:
+    publisher.publish("msg") == true
+  }
+
+  def 'mock'() {
+    when:
+    publisher.publish("msg")
+
+    then:
+    1 * subscriber0.receive("msg")
+    1 * subscriber1.receive("msg")
+  }
+}
+  \end{minted}
+  \caption{
+    An example specification that uses the Spock Framework,
+    partially adapted from examples in its reference documentation.
+    \autocite{SpockFrameworkDoc}
+    Imports are not shown.
+  }\label{fig:SpockTestExample}
+\end{figure}
