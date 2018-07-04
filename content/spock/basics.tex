@@ -8,22 +8,22 @@ implicitly becomes a \textit{setup} block.
 The various types of blocks available
 are shown in Figure~\ref{fig:SpockTestExample}.
 
-\textit{Expect-} and \textit{then-}blocks
+\textit{Expect} and \textit{then} blocks
 can contain assertions formed by simple expressions.
 An assertion passes if the expression evaluates to a truthy value
 and fails if it evaluates to a falsy value.
 Simple functional programming-style assertions
 usually look cleaner using the expect style;
-code with side effects should be executed in a when block,
-followed by a then block verifying that
+code with side effects should be executed in a \code{when} block,
+followed by a \code{then} block verifying that
 the effects have resulted in the expected program state.
 It is also possible to assert that an exception
-has been thrown in the preceding when block using \code{thrown},
-which can be seen in the when-then example test case.
+has been thrown in the preceding \code{when} block using \code{thrown},
+which can be seen in the \code{when-then} example test case.
 
 The blocks \textit{setup} (with its alias \textit{given}) and \textit{cleanup}
 are offered to run code before and after the assertions.
-Cleanup blocks are particularly useful because they are \textit{always} run,
+\code{cleanup} blocks are particularly useful because they are \textit{always} run,
 even if the previously executed blocks threw an exception.
 \autocite[Chapter: Spock Primer - Feature Methods - Blocks]{SpockFrameworkDoc}
 This functionality makes them useful for tasks
