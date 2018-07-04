@@ -15,3 +15,24 @@ Mock objects can be created in the following two equivalent ways:
 Subscriber subscriber0 = Mock()
 final subscriber1 = Mock(Subscriber)
 \end{minted}
+
+\paragraph{Stubbing}
+To set up a mock object for stubbing,
+the \textit{right shift operator} (\code{<<}) can be used:
+\begin{minted}{groovy}
+subscriber0.receive("msg") >> true
+\end{minted}
+
+This \textit{interaction declaration} instructs the Spock Framework that when
+the method \code{receive} is called with
+the sole argument \code{"msg"} on
+the mock object \code{subscriber0},
+the call should return \code{true}.
+Interaction declarations for stubbing usually appear in a setup block
+to prepare the mock object for usage in the following when or expect block.
+
+The `stub' example in Figure~\ref{fig:SpockTestExample}
+also uses the special underscore (\code{_}) identifier.
+Used as a method argument, it denotes `any argument'
+and thus makes the stub from the example return \code{true}
+on every single-argument call to its \code{receive} method.
