@@ -36,3 +36,28 @@ also uses the special underscore (\code{_}) identifier.
 Used as a method argument, it denotes `any argument'
 and thus makes the stub from the example return \code{true}
 on every single-argument call to its \code{receive} method.
+
+\paragraph{Mocking}
+To setup up expectations on a mock object,
+the \textit{multiplication operator} (\code{*}) can be used:
+\begin{minted}{groovy}
+1 * subscriber0.receive("msg")
+\end{minted}
+
+This is also an interaction declaration. It asserts that
+the method \code{receive} was called \textbf{exactly once} with
+the sole argument \code{"msg"} on
+the mock object \code{subscriber0}.
+Interaction declarations for mocking usually appear in a \code{then} block
+to verify that the expected calls to the mock object
+have been made in a the preceding \code{when} block.
+
+The underscore placeholder could also be used here,
+either as the method argument,
+or even as the cardinality
+on the left-hand side of the multiplication operation,
+which denotes `any number of invocations, including zero'.
+That would usually makes it a worthless interaction declaration,
+however, it can be useful to allow certain interactions when followed by
+a declaration that forbids a superset of those interactions.
+\autocite[Chapter: Interaction Based Testing - Mocking - Strict Mocking]{SpockFrameworkDoc}
