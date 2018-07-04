@@ -1,2 +1,27 @@
 \section{Data-driven testing}
-TODO
+Spock also provides a special syntax for \textit{data-driven testing},
+shown in the \textit{where} example of Figure~\ref{fig:SpockTestExample}.
+Using the Data-driven testing features of the Spock Framework,
+the same test code can easily be run multiple times,
+but passing different inputs to the system under test
+and expecting different outputs from it.
+\autocite{SpockFrameworkDoc}
+
+The given example declares the test data using a \textit{data table},
+resulting in a very compact representation of the data,
+separating the data points in the rows
+and the variable names in the header
+with a single pipe (\code{|}).
+A double pipe (\code{||}) is used to separate
+inputs (a / b) and expected values (r) clearly;
+this difference is only visual,
+Spock treats single and double pipes in data tables equally.
+\autocite{SpockFrameworkDoc}
+
+\textit{Data pipes} such as \mintinline{groovy}{a << [1, 7, 0]}
+can be used as an alternative to data tables and even
+allows generating data points dynamically.
+However, since data-driven testing is not a primary concern of this paper,
+we will not go into more detail for this aspect of the Spock Framework
+and instead refer to its documentation.
+\autocite{SpockFrameworkDoc}
