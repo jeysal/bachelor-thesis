@@ -4,7 +4,7 @@ These blocks are started by a label,
 such as \code{setup:}, \code{expect:}, and \code{then:}.
 Any code in a test case before a block is declared
 implicitly becomes a \textit{setup} block.
-\autocite{SpockFrameworkDoc}
+\autocite[Chapter: Spock Primer - Feature Methods - Blocks]{SpockFrameworkDoc}
 The various types of blocks available
 are shown in Figure~\ref{fig:SpockTestExample}.
 
@@ -25,7 +25,7 @@ The blocks \textit{setup} (with its alias \textit{given}) and \textit{cleanup}
 are offered to run code before and after the assertions.
 Cleanup blocks are particularly useful because they are \textit{always} run,
 even if the previously executed blocks threw an exception.
-\autocite{SpockFrameworkDoc}
+\autocite[Chapter: Spock Primer - Feature Methods - Blocks]{SpockFrameworkDoc}
 This functionality makes them useful for tasks
 such as restoring the previous state after I/O operations,
 as shown in the setup-cleanup example test case.
