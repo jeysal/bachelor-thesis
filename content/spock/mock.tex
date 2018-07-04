@@ -61,3 +61,43 @@ That would usually makes it a worthless interaction declaration,
 however, it can be useful to allow certain interactions when followed by
 a declaration that forbids a superset of those interactions.
 \autocite[Chapter: Interaction Based Testing - Mocking - Strict Mocking]{SpockFrameworkDoc}
+
+\paragraph{Advanced interaction declarations}
+The interaction testing DSL of the Spock Framework
+is capable of much more than the functionality described here,
+but we will not implement or need to know about any of
+those advanced interaction testing features.
+For the sake of completeness
+and to suggest some material for future experimentation,
+we will briefly mention some of that functionality.
+
+Stubbing and mocking can be combined
+within an interaction declaration.
+This way, the test can both assert that
+a method call has occurred and
+stub a return value for that same call.
+Declaring the interactions separately
+will not result in the desired behavior ---
+only one interaction declaration will be matched.
+\autocite[Chapter: Interaction Based Testing - Combining Mocking and Stubbing]{SpockFrameworkDoc}
+
+Other features include
+\autocite[Chapter: Interaction Based Testing]{SpockFrameworkDoc}
+\begin{itemize}
+  \item \textit{spy} objects,
+  \item stubs returning different values for each invocation,
+    \begin{itemize}
+      \item even dynamically computed ones,
+    \end{itemize}
+  \item declaring interactions on mock object creation,
+  \item order-sensitive interaction expectations,
+  \item cardinality ranges in mock interaction declarations,
+  \item matching method names using regular expressions, and
+  \item various advanced method argument constraints, such as
+    \begin{itemize}
+      \item matching all arguments \textit{except} a certain value,
+      \item matching arguments by type,
+      \item matching an arbitrary number of arguments, and
+      \item dynamically matching arguments using a closure.
+    \end{itemize}
+\end{itemize}
