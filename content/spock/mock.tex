@@ -1,2 +1,17 @@
 \section{Interaction testing}
-TODO
+The Spock Framework comes with an own library
+for creating test mocks
+(which are at the same time also test stubs).
+While it is possible to use any such library
+written in Java or another language
+that can be compiled to JVM bytecode
+in conjunction with the Spock Framework,
+only mock objects created using Spock
+can be used with its special syntax
+for declaring mock interactions.
+Mock objects can be created in the following two equivalent ways:
+\autocite[Chapter: Interaction Based Testing - Creating Mock Objects]{SpockFrameworkDoc}
+\begin{minted}{groovy}
+Subscriber subscriber0 = Mock()
+final subscriber1 = Mock(Subscriber)
+\end{minted}
