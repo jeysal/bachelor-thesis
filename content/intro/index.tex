@@ -1,112 +1,16 @@
 \chapter{Introduction}
-In software development, automated tests are one of the key tools
-to achieve a high level of software quality.
-Writing tests efficiently itself requires good support
-from the programming language, standard library, or third party tools.
-We will take a look at two types of testing tools:
-\begin{itemize}
-  \item \textit{assertion libraries} and
-  \item \textit{stubbing / mocking libraries}.
-\end{itemize}
-Both can be standalone or part of a greater testing framework or utility library.
-The former are used to specify a part of the \textit{test oracle},
-deciding whether a test case is considered to pass successfully or fail with an error.
-The latter are particularly important for substituting subsystems in component testing,
-and mock expectations can also form another part of the test oracle.
-We will highlight these aspects of software testing in Chapter~\ref{chap:Testing}.
+Expatiating on the information given in the abstract,
+this introductory chapter
+states the goal of the paper in the \textit{goal} section
+after motivating it in the \textit{motivation} section
+and providing some technical context in the \textit{content} section;
+finally, it outlines the path we take throughout the chapters
+to achieve our goal in the \textit{structure} section.
 
-Assertions are often encoded as chained function calls,
-sometimes called \textit{BDD (behavior-driven development)} style,
-or in a more classical style as plain calls to an assertion function:
-\autocite{ChaiBddDoc}\autocite{ChaiTddDoc}
-\begin{minted}{javascript}
-expect(1).to.equal(1);
-assert(1 === 1);
-\end{minted}
-Stubbing and mocking libraries tend to follow a similar API design approach:
-\autocite{SinonStubDoc}\autocite{SinonMockDoc}
-\begin{minted}{javascript}
-const doubleStub = stub().withArgs(21).returns(42);
-const myMock = mock(myApi).expects("method")
-                          .once().withArgs(42, 1337);
-\end{minted}
+\input{content/intro/motivation.tex}
 
-\paragraph{The Spock Framework DSL}
-The popular testing framework \textit{Spock Framework}
-for the Groovy programming language takes a different route.
-It defines a \textit{domain-specific language (DSL)} for the test cases
-that allows expressing assertions and stub / mock interactions in a very concise way.
-This DSL cannot be implemented entirely by a `userspace' library, therefore,
-Spock hooks into the compiler and transforms the syntax tree prior to test execution.
-We will touch on the basics of
-syntax tree traversal and transformation
-in Chapter~\ref{chap:Ast}.
+\input{content/intro/context.tex}
 
-Spock allows expressing assertions in \code{expect} blocks,
-or alternatively in \code{when}-\code{then} blocks:
-\autocite{SpockFrameworkDoc}
-\begin{minted}{groovy}
-expect:
-Math.max(1, 2) == 2
-// ---
-when:
-stack.push(elem)
-then:
-stack.size() == 1
-\end{minted}
-Stub and mock interactions can be expressed in the same fashion:
-\autocite{SpockFrameworkDoc}
-\begin{minted}{groovy}
-then:
-// return "ok" for every call to receive
-subscriber.receive(_) >> "ok"
-// expect 1 call to receive with argument "hello"
-1 * subscriber2.receive("hello")
-\end{minted}
-We will take a closer look at DSLs and the Spock Framework in Chapter~\ref{chap:Spock}.
+\input{content/intro/goal.tex}
 
-\paragraph{Interaction testing for spockjs}
-\textit{Spockjs} is a work-in-progress implementation
-of Spock-style testing for JavaScript.
-\autocite{SpockjsGithub}
-The latest version at the time of writing
-supports use of the \code{expect} and \code{when}-\code{then}
-labels to express assertions,
-but has not yet implemented any
-of the more advanced features of Spock.
-Spockjs is test runner-agnostic by
-hooking into the popular JavaScript compiler babel,
-which integrates with most modern test runners.
-\autocite{BabelSetupDoc}
-
-Our goal is to complement the existing spockjs functionality
-with basic support for Spock-style interaction testing.
-In addition to preserving the property of test runner-agnosticism,
-the interaction testing implementation shall also be
-agnostic of the mocking library in use ---
-unlike the original Spock, which ships with its own mock object implementation.
-This design provides the benefits
-\begin{itemize}
-  \item that users can still access specific features
-    of their library of choice past spockjs,
-    in particular features that integrate well with
-    their test runner and other tools, and
-  \item that users can choose to quit using spockjs at any time
-    and even use an automated escape hatch to return to using their library directly,
-    like it is already possible with assertions in spockjs,
-    thus avoiding a form of `technology lock-in'.
-\end{itemize}
-
-To achieve this kind of flexibility,
-we experiment with and evaluate two different approaches:
-\begin{enumerate}
-  \item Immediately compiling the interaction declarations
-    to calls to the target mocking library, and
-  \item compiling the interaction declarations
-    to calls to our own uniform interface
-    while providing implementations
-    of that interface
-    for each target mocking library.
-\end{enumerate}
-
-TODO chapter refs
+\input{content/intro/structure.tex}

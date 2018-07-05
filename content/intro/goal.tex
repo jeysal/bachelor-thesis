@@ -1,0 +1,36 @@
+\section{Goal}
+Our goal is to complement the existing spockjs functionality
+with basic support for Spock-style interaction testing.
+In addition to preserving the property of test runner-agnosticism,
+the interaction testing implementation shall also be
+agnostic of the mocking library in use ---
+unlike the original Spock, which ships with its own mock object implementation.
+This design provides the benefits
+\begin{itemize}
+  \item that users can still access specific features
+    of their library of choice past spockjs,
+    in particular features that integrate well with
+    their test runner and other tools, and
+  \item that users can choose to quit using spockjs at any time
+    and even use an automated escape hatch to return to using their library directly,
+    like it is already possible with assertions in spockjs,
+    thus avoiding a form of `technology lock-in'.
+\end{itemize}
+
+To achieve this kind of flexibility,
+we experiment with and evaluate two different approaches:
+\begin{enumerate}
+  \item Immediately compiling the interaction declarations
+    to calls to the target mocking library, and
+  \item compiling the interaction declarations
+    to calls to our own uniform interface
+    while providing implementations
+    of that interface
+    for each target mocking library.
+\end{enumerate}
+Because a comparison uncovering advantages and disadvantages of these two architectures
+as well as techniques to tame their individual challenges
+may also be valuable for the implementation of other DSLs
+using the custom compilation approach,
+we make highlighting those discoveries an explicit goal of ours too.
+% TODO get back to this, what are our discoveries?

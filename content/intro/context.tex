@@ -1,0 +1,44 @@
+\section{Context}
+The popular testing framework \textit{Spock Framework}
+for the Groovy programming language takes a route
+that significantly differs from the usage of
+classic testing helper libraries.
+It defines a \textit{domain-specific language (DSL)} for the test cases
+that allows expressing assertions and stub / mock interactions in a very concise way.
+This DSL cannot be implemented entirely by a `userspace' library, therefore,
+Spock hooks into the compiler and transforms the syntax tree prior to test execution.
+
+Spock allows expressing assertions in \code{expect} blocks,
+or alternatively in \code{when}-\code{then} blocks:
+\autocite{SpockFrameworkDoc}
+\begin{minted}{groovy}
+expect:
+Math.max(1, 2) == 2
+// ---
+when:
+stack.push(elem)
+then:
+stack.size() == 1
+\end{minted}
+Stub and mock interactions can be expressed in the same fashion:
+\autocite{SpockFrameworkDoc}
+\begin{minted}{groovy}
+then:
+// return "ok" for every call to receive
+subscriber.receive(_) >> "ok"
+// expect 1 call to receive with argument "hello"
+1 * subscriber2.receive("hello")
+\end{minted}
+
+\textit{Spockjs} is a work-in-progress implementation
+of Spock-style testing for JavaScript.
+\autocite{SpockjsGithub}
+The latest version at the time of writing
+supports use of the \code{expect} and \code{when}-\code{then}
+labels to express assertions,
+but has not yet implemented any
+of the more advanced features of Spock.
+Spockjs is test runner-agnostic by
+hooking into the popular JavaScript compiler babel,
+which integrates with most modern test runners.
+\autocite{BabelSetupDoc}
