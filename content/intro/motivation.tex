@@ -30,4 +30,23 @@ const myMock = mock(myApi).expects("method")
                           .once().withArgs(42, 1337);
 \end{minted}
 
-TODO too much boilerplate, doesn't feel natural, is there a cleaner way?
+Using these libraries to abstract away
+the implementation details of our test oracles
+is key to allowing test authors to
+focus only on the inputs and expectations in a test case.
+But the libraries do not eliminate all boilerplate code.
+For example, we still need to repeat the \code{assert} call
+for each assertion in a test case that contains multiple of them,
+which may be a very minor annoyance,
+but can still be considered excess boilerplate.
+
+More significantly, stubbing and mocking does not look natural at all.
+Why do we need to declare stub and mock calls like
+\begin{minted}{javascript}
+mock(myApi).expects("method").withArgs(42, 1337)
+\end{minted}
+instead of the ordinary
+\begin{minted}{javascript}
+myApi.method(42, 1337)
+\end{minted}
+that we know from the regular method call syntax as defined by the language?
