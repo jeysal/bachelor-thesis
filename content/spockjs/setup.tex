@@ -9,4 +9,73 @@ which can be set up to work with most modern test runners.
 We will look at how spockjs uses Babel to implement assertion blocks later in the chapter.
 
 \subsection{Configuration}
-TODO
+Spockjs is designed to work well by default,
+but does offer a few configuration options,
+mostly to turn miscellaneous features on or off.
+\autocite{SpockjsGithub}
+
+\paragraph{powerAssert}
+This on-by-default option causes spockjs to generate
+detailed error messages when an assertion fails
+using an external library provided by the \textit{power-assert} project.
+\autocite{PowerAssertGithub}
+The following is an example of how such an error message can look:
+\autocite{SpockjsGithub}
+\begin{minted}{text}
+assert(3 * 3 >= 4 * 4)
+         |   |    |
+         |   |    16
+         9   false
+\end{minted}
+
+\paragraph{autoImport}
+This on-by-default option causes spockjs to
+automatically import necessary modules
+--- such as the \code{assert} core module ---
+into the test file.
+Without this feature, users would need to
+manually add an import to each test file,
+which is easy to forget and might cause
+other tools to warn about the import being supposedly unused.
+
+\paragraph{staticTruthCheck}
+This off-by-default option causes spockjs to
+use the static analysis capabilities of Babel
+in order to detect assertions
+that can be inferred to always be truthy or always be falsy,
+which indicates that the assertion might not provide any value to the test case,
+and throw an error without even executing the test.
+The following is an example of such a useless assertion:
+\begin{minted}{javascript}
+const x = 1;
+expect: x === 1;
+\end{minted}
+
+\paragraph{assertFunctionName}
+This string option can override the name of the assert function spockjs uses,
+which can be useful if \textit{autoImport} is not used,
+or for the \textit{escape route} that spockjs provides
+for users who want to stop using spockjs without rewriting all their tests,
+which we will get back to in a later chapter.
+By default, the name of the assert function is \textit{'assert'}
+or whichever free identifier is chosen for the automatic import.
+
+\paragraph{presets}
+This array of strings can be used to apply so-called \textit{presets},
+which can hook into the transformation logic of spockjs
+and customize its behavior in various ways.
+We will analyze the preset mechanism in greater detail
+when talking about the architecture of spockjs.
+% TODO check that this has been done adequately
+Spockjs currently provides two `official' presets:
+\begin{itemize}
+  \item \textit{@spockjs/runner-jest} ensures helpful assertion error messages
+    when using the test runner Jest, \autocite{JestGithub}
+    which would otherwise hide too many details
+    due to its special handling of assertion errors.
+  \item \textit{@spockjs/runner-ava} eliminates the necessity to
+    set an AVA \autocite{AvaGithub} configuration option
+    that makes test cases fail erroneously if not set,
+    and it causes assertion error messages to look
+    exactly the same as if native AVA assertions were used.
+\end{itemize}
