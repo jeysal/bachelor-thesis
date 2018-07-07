@@ -1,2 +1,78 @@
 \section{Assertion blocks}
-TODO
+Assertion blocks are the only feature of the original Spock Framework
+that spockjs has implemented so far.
+A simple assertion can be realized using spockjs
+in the same way it would look using the original Spock:
+\autocite{SpockjsGithub}
+\begin{minted}{javascript}
+expect: 'a' + 'b' === 'ab';
+\end{minted}
+In ESTree terms, this is a \textit{LabeledStatement}
+with an \textit{Identifier} named \textit{'expect'} as its \textit{label}
+and an \textit{ExpressionStatement} as its body,
+containing the strict equality \textit{BinaryExpression}.
+
+Unlike Spock, to write an assertion block with multiple assertions in spockjs,
+the \textit{ExpressionStatement}s must be wrapped in a \textit{BlockStatement}:
+\autocite{SpockjsGithub}
+\begin{minted}{javascript}
+expect: {
+  'a' + 'b' === 'ab';
+  1 < 2;
+}
+\end{minted}
+This allows users to continue with ordinary statements after an assertion block
+instead of implicitly assuming that everything in a test case
+that comes after a label is an assertion.
+It also fits the representation in the AST better,
+since all assertions are children in the \textit{body} of the
+\textit{LabeledStatement} that represents the assertion block
+instead of its following siblings inside
+the surrounding method body or other \textit{BlockStatement}.
+In consequence, we also avoid a weird formatting style
+of the assertion block that an automatic formatter might otherwise produce:
+\begin{minted}{javascript}
+expect:
+  'a' + 'b' === 'ab';
+1 < 2;
+// or
+expect: 'a' + 'b' === 'ab';
+1 < 2;
+\end{minted}
+
+Using the alternative \textit{when-then-style}
+for code with side effects is supported as well,
+with \code{when} and \code{expect} blocks
+being treated in exactly the same way:
+\begin{minted}{javascript}
+when: {
+  abc.setXyz(1);
+}
+
+then: {
+  abc.getXyz() === 1;
+}
+\end{minted}
+The \code{when} block does not have any special meaning here,
+its only purpose is to improve readability of the test case
+but could in theory be replaced with just its contents.
+\autocite{SpockjsGithub}
+
+Using statements other than \textit{ExpressionStatements}
+and \textit{BlockStatements} consisting of \textit{ExpressionStatements}
+--- such as control structures ---
+in an assertion block is not permitted.
+For instance, the following code would not compile with spockjs:
+\begin{minted}{javascript}
+expect: {
+  if (x < 1) x === 0.5;
+  else x === 2;
+}
+\end{minted}
+However, assertion blocks can be nested into other structures,
+so the desired behavior from this example can be achieved in the following way:
+\autocite{SpockjsGithub}
+\begin{minted}{javascript}
+if (x < 1) expect: x === 0.5;
+else expect: x === 2;
+\end{minted}
