@@ -64,3 +64,34 @@ to access user-supplied configuration options that a plugin might offer.
 The remaining part of the plugin inside the binary expression visitor
 is the code developed in Chapter~\ref{chap:Ast}
 and performs the transformation as already explained there.
+
+\subsection{Nodes vs.\ paths}
+Visitor methods receive \textit{path} objects when they are called while the AST is traversed.
+Unlike nodes, which almost exactly reflect the node objects as defined by ESTree,
+paths are aware of their context in the tree and, in particular, their parents.
+This means that while a path could be used to reach and manipulate any part of the tree,
+including those above the corresponding node,
+a node can only be used to inspect and manipulate its children.
+
+We have already seen how to navigate and manipulate the primitive node objects,
+so let us now take a quick look at the more powerful path objects,
+covering only a select few of their many functions that are relevant to spockjs.
+
+To retrieve child paths, \code{get} can be used,
+specifying the property access path that would be taken on a node as a string argument:
+\begin{minted}{javascript}
+path.node.left === path.get('left').node
+path.node.body[0] === path.get('body.0').node
+\end{minted}
+
+Spockjs also frequently uses the \code{replace} method,
+which discards the entire node that belongs to the path
+and replaces it with a given node,
+and its sibling method \code{replaceWithMultiple},
+which replaces it with all nodes in a given array,
+provided that the surrounding context allows that to happen.
+
+In fatal error cases, the utility method \code{buildCodeFrameError}
+is highly useful to bail with an error message
+that tells the user where in the source code
+the bit that the plugin doesn't understand is located.
