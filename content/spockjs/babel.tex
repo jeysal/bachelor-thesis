@@ -19,3 +19,48 @@ In the following, we will acquire some basic knowledge on how to develop Babel p
 For a more extensive and detailed view that would go beyond the scope of this paper,
 both the author and the official Babel documentation recommend the Babel Plugin Handbook.
 \autocite{BabelPluginHandbook}
+
+\subsection{Plugin visitors}.
+Babel plugins apply AST transformations in \textit{visitors}
+as introduced in Chapter~\ref{chap:Ast}.
+A Babel plugin is essentially no more than a module that exports
+a function returning an object with arbitrary visitor functions.
+The following is the full Babel plugin to accomplish
+the strict equality swap example transformation
+as described in Chapter~\ref{chap:Ast}:
+\begin{minted}{javascript}
+export default ({ types: t }) => ({
+  visitor: {
+    BinaryExpression({ node }) {
+      if (node.operator === "===") {
+        [node.left, node.right] = [node.right, node.left];
+      }
+    }
+  }
+});
+\end{minted}
+
+The \code{types} property of the object passed to the plugin
+is not used in this particular plugin,
+but is usually one of the most important helpers,
+providing creation methods for each type of node
+and the corresponding type check methods:
+\begin{minted}{javascript}
+t.isIdentifier(t.identifier('something')) === true
+\end{minted}
+
+The visitor object returned from the plugin
+can contain a visitor method for each node type (capitalized),
+but it may be partial, i.e.
+it does not have to implement methods for all of the more than 200 node types.
+In this case, we only provide a visitor for binary expressions.
+The visitor method receives the current \code{path} object as its first parameter,
+which we will later take a closer look at,
+but in this case, we extract only the binary expression node from it.
+There is also a second \code{state} parameter
+that we can disregard here, but it is for example needed
+to access user-supplied configuration options that a plugin might offer.
+
+The remaining part of the plugin inside the binary expression visitor
+is the code developed in Chapter~\ref{chap:Ast}
+and performs the transformation as already explained there.
