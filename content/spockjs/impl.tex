@@ -6,7 +6,41 @@ In this section, we examine the existing implementation of assertion blocks in s
 \end{enumerate}
 
 \subsection{Blocks}
-TODO
+The \textit{@spockjs/babel-plugin-spock} package is the entry point that exposes a Babel plugin ---
+we will talk about the multi-package structure of spockjs later in the chapter.
+The full source code of this package is shown in Figure~\ref{fig:BabelPluginSpockBefore}.
+
+The Babel plugin in lines 39 to 54 consists of just a single visitor method for labeled statements.
+The visitor checks whether the label name of the current statements
+is one of the known labels that designate an assertion block
+--- \mintinline{typescript}{['expect', 'then']} --- and if so,
+it calls the \textit{transformLabeledBlockOrSingle} helper defined in lines 11 to 37
+to apply the \textit{assertifyStatement} transformation
+to each statement in the case of a block statement contained inside the labeled statement,
+or otherwise to the single statement contained inside the labeled statement.
+
+Note that the \textit{assertifyStatement} transformation function,
+which comes from the \textit{@spockjs/assertion-block} package that we will address after the general block handling,
+is a higher-order function with the signature
+\begin{minted}{typescript}
+(babel, state, config) => (
+  statementPath: NodePath<BabelTypes.Statement>
+) => void;
+\end{minted}
+, so after applying the first three arguments,
+it can be used any number of times on different statement paths.
+
+The \textit{transformLabeledBlockOrSingle} helper does exactly that for us,
+applying the transformation to the statements in a block statement in line 26,
+or to a single statement in line 32.
+It also removes the labels by
+replacing the labeled statement with its body
+in line 29 or 35, respectively,
+in order to produce cleaner code.
+We will be able to reuse this helper when implementing
+interaction blocks later on.
+
+\input{content/spockjs/babel-plugin-spock.tex}
 
 \subsection{Assertions}
 TODO
