@@ -43,4 +43,74 @@ interaction blocks later on.
 \input{content/spockjs/babel-plugin-spock.tex}
 
 \subsection{Assertions}
-TODO
+The \textit{@spockjs/assertion-block} exports the aforesaid function
+that can be used to \textit{assertify} a statement,
+converting it from an unused expression statement to a function call and
+passing the result of evaluating the expression to the assert function.
+Figure~\ref{fig:AssertionBlockCore} shows the core part of the package
+that performs this transformation,
+while omitting some miscellaneous code that is
+not essential to the assertion block concept.
+
+\begin{figure}
+  \begin{minted}[linenos,fontsize=\scriptsize]{typescript}
+(statementPath: NodePath<BabelTypes.Statement>) => {
+  if (statementPath.isExpressionStatement()) {
+    const statement = statementPath.node;
+    const origExpr = statement.expression;
+
+    const assertIdentifier = t.identifier('assert');
+    const newExpr = t.callExpression(assertIdentifier, [origExpr]);
+
+    statement.expression = newExpr;
+  } else {
+    throw statementPath.buildCodeFrameError(
+      `Expected an expression statement, but got a statement of type ${
+        statementPath.type
+      }`,
+    );
+  }
+};
+  \end{minted}
+  \caption{
+    A stripped-down version of \textit{@spockjs/assertion-block}
+    without powerAssert, autoImport, staticTruthCheck, assertFunctionName,
+    preset post processing, line/column number handling, and
+    the enclosing function with the babel, state and config parameters.
+  }\label{fig:AssertionBlockCore}
+\end{figure}
+
+First of all, if the statement passed to us is not an \textit{ExpressionStatement},
+we will not be able to use it as an argument to an assert function call,
+so we bail with a compile-time error in lines 11 to 15.
+Otherwise, we generate a \textit{CallExpression}
+with the \textit{Identifier} `assert' as its \textit{callee},
+and the original expression as its single argument in lines 6 to 7
+and update the statement to our new expression in line 9.
+
+Figure~\ref{fig:AssertionBlockAst} shows the AST after such a transformation,
+with the nodes and edges that have been newly inserted highlighted in teal,
+for the example input code
+\begin{minted}{javascript}
+expect: true;
+\end{minted}
+that is transformed to:
+\begin{minted}{javascript}
+expect: assert(true);
+\end{minted}
+
+\begin{figure}
+  \centering \setminted{fontsize=\scriptsize}
+  \begin{forest}
+    for tree={l=1.6cm}
+    [{Program}
+    [ {LabeledStatement}, edge label={node[midway,left]{\code{body[0]}}}
+    [  {Identifier (name: \code{expect})}, edge label={node[midway,left]{\code{label}}}]
+    [  {ExpressionStatement}, edge label={node[midway,right]{\code{body}}}
+    [   {\color{teal}CallExpression}, edge label={node[midway,left]{\code{expression}}}
+    [    {\color{teal}Identifier (name: \code{assert})}, edge=teal, edge label={node[midway,left]{\code{callee}}}]
+    [    {BooleanLiteral (value: \code{true})}, edge=teal, edge label={node[midway,right]{\code{arguments[0]}}}]]]]]
+  \end{forest}
+  \caption{An exemplary AST after an assertion block transformation,
+    with newly inserted nodes and edges highlighted in teal.}\label{fig:AssertionBlockAst}
+\end{figure}
