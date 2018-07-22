@@ -1,0 +1,24 @@
+\section{Architecture}
+Although the entire codebase of spockjs resides in
+a single source code repository (\textit{monorepo}),
+it is organized in and distributed as various packages
+on the \textit{npm (Node.js package manager)} registry,
+\autocite{Npm}
+the de facto standard place for publishing JavaScript code.
+The packages are all published in the \textit{@spockjs} namespace.
+We have already seen two of these packages:
+\textit{@spockjs/babel-plugin-spock} and \textit{@spockjs/assertion-block}.
+There are a total of nine packages,
+and we will add some more when implementing interaction testing.
+
+Inside the repository, a package \textit{@spockjs/name}
+is located in a \textit{packages/name} directory.
+The `workspaces' feature \autocite{YarnWorkspacesDoc}
+of the package manager \textit{Yarn}
+links them all together during development
+so changes across multiple packages do not require
+first publishing the changes to a dependency
+before working on the changes to a dependent.
+In addition, the tool \textit{Lerna} \autocite{LernaGithub} is used to
+perform tasks such as builds, changelog generation, version bumps, and releases
+on multiple packages at once.
