@@ -1,0 +1,90 @@
+\section{Syntax}
+Like assertion blocks, interaction blocks are also introduced by a labeled statement.
+The label name may be either \textit{mock} or \textit{stub},
+with no technical distinction being made between those two ---
+although users are, of course, urgently reminded not to use them inappropriately.
+
+The body of such a labeled statement
+--- or, in the case of a block statement, each statement contained within it ---
+may have the shape of a \textit{Mock-}, \textit{Stub-}, or \textit{CombinedInteractionDeclaration}
+as shown in Figure~\ref{fig:InteractionBlockVariants}.
+The multiplication and right shift operators are the same
+that the Spock Framework uses for interaction declarations.
+
+\begin{figure}
+  {\color{teal}
+    \begin{minted}{text}
+MockInteractionDeclaration:
+cardinality * call;
+    \end{minted}
+  }
+  {\color{magenta}
+    \begin{minted}{text}
+StubInteractionDeclaration:
+call >> returnValue;
+    \end{minted}
+  }
+  {\color{violet}
+    \begin{minted}{text}
+CombinedInteractionDeclaration:
+cardinality * call >> returnValue;
+    \end{minted}
+  }
+  \caption{
+    The source code structure of a Mock-, Stub-, or CombinedInteractionDeclaration
+  }\label{fig:InteractionBlockVariants}
+\end{figure}
+
+Figure~\ref{fig:InteractionBlockAst} shows the corresponding AST structure
+for all three variants, distinguished by color.
+The terminal nodes we need to extract are
+\begin{itemize}
+  \item the \textit{mockObject},
+  \item the \textit{args},
+  \item the \textit{cardinality} (for mock interactions), and
+  \item the \textit{returnValue} (for stub interactions).
+\end{itemize}
+The \textit{mockObject} and the \textit{args} always appear
+in the same \code{CallExpression} \textit{call}
+that is shown in Figure~\ref{fig:InteractionBlockCallAst},
+although that call may be attached to three different sections of the AST.
+
+\begin{figure}
+  \centering \setminted{fontsize=\footnotesize}
+  \forestset{
+    qtree/.style={
+      baseline,
+      for tree={
+        align=center,
+        l=3cm,
+      }}}
+  \begin{forest}, baseline, qtree
+    [ExpressionStatement
+    [ BinaryExpression (operator: {\color{teal}\code{*}} / {\color{magenta}\code{>>}} / {\color{violet}\code{>>}}), edge label={node[midway,left]{\code{expression}}}
+    [  {\color{teal}Expression \code{cardinality}}\\{\color{magenta}CallExpression \code{call}}\\{\color{violet}BinaryExpression (operator: \code{*})}, edge label={node[midway,left]{\code{left}}}
+    [   {\color{violet}Expression \code{cardinality}}, edge=violet, edge label={node[midway,left]{\code{left}}}]
+    [   {\color{violet}CallExpression \code{call}}, edge=violet, edge label={node[midway,right]{\code{right}}}]]
+    [  {\color{teal}CallExpression \code{call}}\\{\color{magenta}Expression \code{returnValue}}, edge label={node[midway,right]{\code{right}}}]]]
+  \end{forest}
+  \caption{
+    The AST of a Mock-, Stub-, or CombinedInteractionDeclaration,
+    matching colors with their corresponding source code structures
+    in Figure~\ref{fig:InteractionBlockVariants}.
+    The \textit{calls} are collapsed to save space;
+    their homogeneous subtrees are shown in detail in Figure~\ref{fig:InteractionBlockCallAst}.
+  }\label{fig:InteractionBlockAst}
+\end{figure}
+
+\begin{figure}
+  \centering \setminted{fontsize=\footnotesize}
+  \begin{forest}
+  for tree={l=1.6cm}
+    [{CallExpression \code{call}}
+    [ {Expression \code{mockObject}}, edge label={node[midway,left]{\code{callee}}}]
+    [ {Expression \code{args}}, edge label={node[midway,right]{\code{arguments}}}]]
+  \end{forest}
+  \caption{
+    The AST of a \textit{call} as it appears in multiple places
+    in Figure~\ref{fig:InteractionBlockAst}.
+  }\label{fig:InteractionBlockCallAst}
+\end{figure}
