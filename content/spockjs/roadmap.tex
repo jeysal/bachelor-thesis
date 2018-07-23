@@ -1,0 +1,17 @@
+\section{Roadmap}
+Spockjs has a lot of potential for additional features in the form of new block types.
+Conceivable enhancements are
+\begin{itemize}
+  \item a block to perform the common task of asserting deep equality on objects and arrays,
+    e.g. \code{expect: deepEq: a, b;},
+  \item a block to assert that the statements inside it throw an error,
+    e.g. \code{expect: throws: fn();},
+  \item a block to capture a snapshot of a value, given that the test runner supports snapshot testing,
+    e.g. \code{snapshot: a;}, and
+  \item combinations of those,
+    e.g. \code{snapshot: throws: fn();} to assert that an error is thrown and capture a snapshot of it.
+\end{itemize}
+
+The largest upcoming enhancement is the interaction testing capabilities
+similar to the original Spock Framework.
+We will lay the foundation for those in the next chapter.
