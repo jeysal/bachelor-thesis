@@ -1,2 +1,108 @@
-\section{Parsing}
-TODO
+\section{Interaction declaration parsing}
+The three different interaction declaration types
+are represented as a tagged union \code{InteractionDeclaration}
+with the discriminator property \code{kind}
+as shown in Figure~\ref{fig:InteractionDeclarationType}.
+The parser we will now build has the following function signature:
+\begin{minted}{typescript}
+(NodePath<BinaryExpression>) => InteractionDeclaration;
+\end{minted}
+In the following, we will use pseudocode to build the parser top-to-bottom.
+The full source code is included in the appendix.
+
+\begin{figure}
+  \begin{minted}[fontsize=\scriptsize]{typescript}
+export interface BaseInteractionDeclaration {
+  mockObject: BabelTypes.Expression;
+  args: (BabelTypes.Expression | BabelTypes.SpreadElement)[];
+}
+export interface MockInteractionDeclaration
+  extends BaseInteractionDeclaration {
+  kind: 'mock';
+  cardinality: BabelTypes.Expression;
+}
+export interface StubInteractionDeclaration
+  extends BaseInteractionDeclaration {
+  kind: 'stub';
+  returnValue: BabelTypes.Expression;
+}
+export interface CombinedInteractionDeclaration
+  extends BaseInteractionDeclaration {
+  kind: 'combined';
+  cardinality: BabelTypes.Expression;
+  returnValue: BabelTypes.Expression;
+}
+export type InteractionDeclaration =
+  | MockInteractionDeclaration
+  | StubInteractionDeclaration
+  | CombinedInteractionDeclaration;
+  \end{minted}
+  \caption{
+    The tagged union type \code{InteractionDeclaration}.
+  }\label{fig:InteractionDeclarationType}
+\end{figure}
+
+The entry point function \code{parseInteractionDeclaration}
+looks at the operator used in the top-level binary expression
+and decides whether the input is
+a mock interaction declaration with operator \code{'*'}
+or a stub or combined interaction declaration with operator \code{'>>'}:
+  \begin{minted}[fontsize=\footnotesize]{text}
+parseInteractionDeclaration(expressionPath):
+  switch (expressionPath.node.operator)
+    case '*'
+      return parseMockInteractionDeclaration(expressionPath)
+    case '>>'
+      return parseStubInteractionDeclaration(expressionPath)
+    default
+      throw 'unexpected operator'
+\end{minted}
+
+The sub-parser function \code{parseMockInteractionDeclaration} simply
+uses the left side of the binary expression as the \textit{cardinality}
+and parses the right side of the binary expression as a \textit{call}:
+\begin{minted}[fontsize=\footnotesize]{text}
+parseMockInteractionDeclaration(expressionPath):
+  return
+    mockObject, args = parseCall(expressionPath.get('right'))
+    kind = 'mock'
+    cardinality = expressionPath.node.left
+\end{minted}
+
+The sub-parser function \code{parseStubInteractionDeclaration}
+behaves similarly for a pure stub interaction declaration,
+using the right side of the binary expression as the \textit{returnValue}
+and parsing the left side of the binary expression as a \textit{call}.
+However, if the left side is a binary expression with operator \code{'*'},
+there is a combined interaction declaration on hand,
+and the left side is instead parsed as a mock interaction declaration:
+\begin{minted}[fontsize=\footnotesize]{text}
+parseStubInteractionDeclaration(expressionPath):
+  let leftPath = expressionPath.get('left')
+  let returnValue = expressionPath.node.right
+  if (leftPath.isBinaryExpression())
+    if (leftPath.node.operator == '*')
+      return
+        mockObject, args, cardinality =
+          parseMockInteractionDeclaration(leftPath)
+        kind = 'combined'
+        returnValue = returnValue
+    throw 'unexpected operator'
+  return
+    mockObject, args = parseCall(leftPath)
+    kind = 'stub'
+    returnValue = returnValue
+\end{minted}
+
+The sub-parser function \code{parseCall}
+simply extracts the \textit{callee} as the \textit{mockObject}
+and the \textit{arguments} as the \textit{args}
+from a \textit{CallExpression}:
+\begin{minted}[fontsize=\footnotesize]{text}
+parseCall(expressionPath):
+  if (expressionPath.isCallExpression())
+    return
+      mockObject = expressionPath.node.callee
+      args = expressionPath.node.arguments
+  throw 'unexpected expression type'
+\end{minted}

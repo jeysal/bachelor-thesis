@@ -1,3 +1,161 @@
 \chapter*{Appendix}
 \addcontentsline{toc}{chapter}{Appendix}
-\section*{TODO}
+\pagestyle{plain}
+\setminted{samepage=no,fontsize=\ssmall}
+
+% TODO this chapter contains the code that is directly relevant to the paper. explain section titles. some words on where to find the full code with a better reading experience...
+
+\section*{experimental-mocking-direct-compilation}
+
+\subsection*{packages/config/src/hooks/interaction.ts}
+\begin{minted}{typescript}
+import * as BabelTypes from '@babel/types';
+
+import { InternalConfig } from '..';
+
+export interface BaseInteractionDeclaration {
+  mockObject: BabelTypes.Expression;
+  args: (BabelTypes.Expression | BabelTypes.SpreadElement)[];
+}
+export interface MockInteractionDeclaration extends BaseInteractionDeclaration {
+  kind: 'mock';
+  cardinality: BabelTypes.Expression;
+}
+export interface StubInteractionDeclaration extends BaseInteractionDeclaration {
+  kind: 'stub';
+  returnValue: BabelTypes.Expression;
+}
+export interface CombinedInteractionDeclaration
+  extends BaseInteractionDeclaration {
+  kind: 'combined';
+  cardinality: BabelTypes.Expression;
+  returnValue: BabelTypes.Expression;
+}
+export type InteractionDeclaration =
+  | MockInteractionDeclaration
+  | StubInteractionDeclaration
+  | CombinedInteractionDeclaration;
+
+export type InteractionProcessor = (
+  t: typeof BabelTypes,
+  config: InternalConfig,
+) => {
+  /**
+   * Whether the processor is meant for standalone use (`true`),
+   * as is the case for those implementing mocking library bindings,
+   * or it is an auxiliary processor (`false`),
+   * such as one that provides better integration with a test runner.
+   * Users will see an error when attempting to use interaction blocks
+   * without a primary interaction processor.
+   */
+  primary: boolean;
+  declare(interaction: InteractionDeclaration): BabelTypes.Statement;
+  verify(mockObject: BabelTypes.Expression): BabelTypes.Statement;
+};
+\end{minted}
+
+\subsection*{packages/interaction-block/src/parser.ts}
+\begin{minted}{typescript}
+import { NodePath } from '@babel/traverse';
+import { BinaryExpression, Expression, Node } from '@babel/types';
+import {
+  BaseInteractionDeclaration,
+  CombinedInteractionDeclaration,
+  InteractionDeclaration,
+  MockInteractionDeclaration,
+  StubInteractionDeclaration,
+} from '@spockjs/config';
+
+const mockOperator = '*';
+const stubOperator = '>>';
+
+type InteractionDeclarationParser<
+  E extends Node,
+  I extends BaseInteractionDeclaration
+> = (expressionPath: NodePath<E>) => I;
+
+const parseCall: InteractionDeclarationParser<
+  Expression,
+  BaseInteractionDeclaration
+> = (expressionPath: NodePath) => {
+  if (expressionPath.isCallExpression()) {
+    const {
+      node: { callee: mockObject, arguments: args },
+    } = expressionPath;
+    return {
+      mockObject,
+      args,
+    };
+  }
+  throw expressionPath.buildCodeFrameError(
+    `Expected a call expression, but got an expression of type ${
+      expressionPath.type
+    }`,
+  );
+};
+
+const parseMockInteractionDeclaration: InteractionDeclarationParser<
+  BinaryExpression,
+  MockInteractionDeclaration
+> = expressionPath => ({
+  ...parseCall(expressionPath.get('right') as NodePath<Expression>),
+  kind: 'mock',
+  cardinality: expressionPath.node.left,
+});
+
+const parseStubInteractionDeclaration: InteractionDeclarationParser<
+  BinaryExpression,
+  StubInteractionDeclaration | CombinedInteractionDeclaration
+> = expressionPath => {
+  const leftPath = expressionPath.get('left') as NodePath<Expression>;
+  const {
+    node: { right: returnValue },
+  } = expressionPath;
+
+  if (leftPath.isBinaryExpression()) {
+    const {
+      node: { operator },
+    } = leftPath;
+    if (operator === mockOperator) {
+      return {
+        ...parseMockInteractionDeclaration(leftPath),
+        returnValue,
+        kind: 'combined',
+      };
+    }
+    throw new Error(
+      `Expected operator '${mockOperator}' (for combined mocking and stubbing), ` +
+        `but got operator '${operator}'`,
+    );
+  }
+
+  return {
+    ...parseCall(leftPath),
+    returnValue,
+    kind: 'stub',
+  };
+};
+
+const parseInteractionDeclaration: InteractionDeclarationParser<
+  BinaryExpression,
+  InteractionDeclaration
+> = expressionPath => {
+  const { node: expression } = expressionPath;
+  const { operator } = expression;
+
+  switch (operator) {
+    case mockOperator:
+      return parseMockInteractionDeclaration(expressionPath);
+    case stubOperator:
+      return parseStubInteractionDeclaration(expressionPath);
+    default:
+      throw expressionPath.buildCodeFrameError(
+        `Expected operator '${mockOperator}' (for mocking) ` +
+          `or '${stubOperator}' (for stubbing), ` +
+          `but got operator '${operator}'`,
+      );
+  }
+};
+
+export default parseInteractionDeclaration;
+\end{minted}
