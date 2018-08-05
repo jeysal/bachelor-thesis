@@ -1,5 +1,5 @@
 \section{Syntax}
-Like assertion blocks, interaction blocks are also introduced by a labeled statement.
+Like assertion blocks, interaction declaration blocks are also introduced by a labeled statement.
 The label name may be either \textit{mock} or \textit{stub},
 with no technical distinction being made between those two ---
 although users are, of course, urgently reminded not to use them inappropriately.
@@ -88,3 +88,16 @@ although that call may be attached to three different sections of the AST.
     in Figure~\ref{fig:InteractionBlockAst}.
   }\label{fig:InteractionBlockCallAst}
 \end{figure}
+
+In addition to these interaction declaration blocks,
+there are also interaction verification blocks
+that are used to verify that the declared calls on a mock
+have actually occurred:
+\begin{minted}{javascript}
+verify: mockObject;
+\end{minted}
+This explicit verification command is required to be test runner-agnostic,
+because we would need to know the test case structure
+for automatic insertion of verification statements.
+We could still allow their omission by implementing automatic insertion
+in test runner presets at some point.
