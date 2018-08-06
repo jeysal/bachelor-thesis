@@ -1,0 +1,60 @@
+\section{Integration}
+The parser is part of the new \textit{@spockjs/interaction-block} package,
+but it is not the only component of the package,
+let alone the top-level \textit{index.ts} file.
+Instead, \textit{@spockjs/interaction-block} exports a function with the signature:
+\begin{minted}[fontsize=\scriptsize]{typescript}
+(t, config) => ({
+  declare: (statementPath: NodePath<BabelTypes.Statement>) => void,
+  verify: (statementPath: NodePath<BabelTypes.Statement>) => void,
+});
+\end{minted}
+
+This signature is reminiscent of \textit{@spockjs/assertion-block},
+because it, too, performs the task of transforming a declarative block into
+something that actually executes meaningful code.
+However, this package can transform two distinct types of blocks
+--- interaction declaration and interaction verification blocks ---
+so after applying the \code{t} and \code{config} arguments
+that do not change throughout the compilation,
+there are both the \textit{declare} and the \textit{verify} function available
+to be applied to individual blocks with the
+respective labels \textit{mock/stub} and \textit{verify},
+which are also exported by the package as
+\textit{declarationLabels} and \textit{verificationLabel}.
+
+Early during the \textit{declare} transformation,
+the parser we implemented previously will always be called on the \textit{statementPath}.
+Afterwards, the transformation must generate calls to the mocking library in use.
+We will see that there are multiple ways to implement the rest of the transformation
+while supporting multiple mocking libraries.
+We will get to those later in this chapter and in the following chapters.
+
+To integrate the new interaction block transformation package into the
+central \textit{@spockjs/babel-plugin-spock} Babel plugin package
+--- similarly to the assertion block transformation package ---
+we first import all of its exported values:
+\begin{minted}[fontsize=\scriptsize]{typescript}
+import transformInteractionDeclarationStatement, {
+  declarationLabels as interactionDeclarationLabels,
+  verificationLabel as interactionVerificationLabel,
+} from '@spockjs/interaction-block';
+\end{minted}
+Then we add if statements that handle the new block types
+right below the assertion block handling
+(after line 51 in the plugin source code that was
+previously shown in Figure~\ref{fig:BabelPluginSpockBefore}):
+\begin{minted}[fontsize=\scriptsize]{typescript}
+// interaction block
+else if (interactionDeclarationLabels.includes(label)) {
+  transformLabeledBlockOrSingle(
+    transformInteractionDeclarationStatement(babel.types, config).declare,
+    path,
+  );
+} else if (label === interactionVerificationLabel) {
+  transformLabeledBlockOrSingle(
+    transformInteractionDeclarationStatement(babel.types, config).verify,
+    path,
+  );
+}
+\end{minted}
