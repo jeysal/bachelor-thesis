@@ -1,0 +1,45 @@
+\section{Multi-library support}
+Unlike the common operation of parsing interaction declarations,
+generating statements that perform the declaration after parsing
+as well as generating statements that perform the verification
+are more complex tasks that require proper abstractions in order
+to work with multiple supported mocking libraries.
+
+\subsection{Purpose}
+There are multiple reasons why we want to provide support
+for different mocking libraries as opposed to
+supporting just a single one or even shipping our own.
+
+\paragraph{Distinctive library features}
+Users may wish to use special functionality
+provided by their mocking library of choice
+alongside the usage through spockjs.
+This is particularly common for libraries
+that are included in a test runner and
+designed to integrate well with it.
+
+For example, Jest \autocite{JestGithub}
+allows replacing the module \code{module.js}
+with a mock implementation \code{__mocks__/module.js}
+wherever the module is used by simply
+calling \code{jest.mock('./module.js')} in a test.
+\autocite{JestMockFunctions}
+
+\paragraph{Avoiding technology lock-in}
+Forcing the usage of a specific mocking library,
+possibly even one that is only used for spockjs,
+would also significantly increase the severity of
+technology lock-in imposed by spockjs
+by preventing users from returning to
+direct usage of the mocking library
+if they wish to stop using spockjs.
+
+Indeed, avoiding this has been a focus
+for the implementation of assertion blocks.
+The spockjs documentation has a section
+dedicated to an automated escape hatch
+that allows users to transform \textit{(codemod)}
+all of their tests to make conventional assertion calls,
+allowing them to drop spockjs without first
+undergoing an enormous refactoring effort.
+\autocite{SpockjsGithub}
