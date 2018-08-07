@@ -1,8 +1,7 @@
 \section{Integration}
-The parser is part of the new \textit{@spockjs/interaction-block} package,
-but it is not the only component of the package,
-let alone the top-level \textit{index.ts} file.
-Instead, \textit{@spockjs/interaction-block} exports a function with the signature:
+In its top-level \textit{index.ts} file,
+our new \textit{@spockjs/interaction-block} package
+exports a function with the signature:
 \begin{minted}[fontsize=\scriptsize]{typescript}
 (t, config) => ({
   declare: (statementPath: NodePath<BabelTypes.Statement>) => void,
@@ -23,13 +22,6 @@ respective labels \textit{mock/stub} and \textit{verify},
 which are also exported by the package as
 \textit{declarationLabels} and \textit{verificationLabel}.
 
-Early during the \textit{declare} transformation,
-the parser we implemented previously will always be called on the \textit{statementPath}.
-Afterwards, the transformation must generate calls to the mocking library in use.
-We will see that there are multiple ways to implement the rest of the transformation
-while supporting multiple mocking libraries.
-We will get to those later in this chapter and in the following chapters.
-
 To integrate the new interaction block transformation package into the
 central \textit{@spockjs/babel-plugin-spock} Babel plugin package
 --- similarly to the assertion block transformation package ---
@@ -40,7 +32,7 @@ import transformInteractionDeclarationStatement, {
   verificationLabel as interactionVerificationLabel,
 } from '@spockjs/interaction-block';
 \end{minted}
-Then we add if statements that handle the new block types
+Then, we add if statements that handle the new block types
 right below the assertion block handling
 (after line 51 in the plugin source code that was
 previously shown in Figure~\ref{fig:BabelPluginSpockBefore}):

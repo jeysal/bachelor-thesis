@@ -1,5 +1,7 @@
 \section{Interaction declaration parsing}
-The three different interaction declaration types
+The first step of any \textit{declare} transformation
+is parsing the interaction declaration.
+The three different interaction declaration types defined by the syntax
 are represented as a tagged union \code{InteractionDeclaration}
 with the discriminator property \code{kind}
 as shown in Figure~\ref{fig:InteractionDeclarationType}.
