@@ -43,3 +43,33 @@ all of their tests to make conventional assertion calls,
 allowing them to drop spockjs without first
 undergoing an enormous refactoring effort.
 \autocite{SpockjsGithub}
+
+\subsection{Library selection}
+Telling spockjs which mocking library to use should
+take no more than enabling a preset in the configuration.
+However, at least in the first version,
+spockjs does not aim to be fully opaque
+by hiding the mocking library in use as an `implementation detail'.
+This means that users will still need to be aware
+about the mocking library in use.
+
+For example, interaction declarations
+do not have to carry the same semantics
+regardless of which mocking library is used.
+If, for instance, declaring the same interaction twice
+is handled by overriding the first interaction by one backing library,
+another library may instead handle it by `queueing' the declarations
+and expecting the calls to occur in succession.
+
+The reasons for this decision are
+\begin{itemize}
+  \item that ensuring consistent behavior across mocking libraries would mean
+    reimplementing large parts of the libraries ourselves,
+    using the library primitives but not features
+    which may diverge for different libraries,
+    such as their interaction matching capabilities,
+  \item that future advanced features of the spockjs interaction block syntax
+    may not be supported with all mocking libraries, and
+  \item that users would still need to instantiate mock objects themselves,
+    so the backing library would not be fully opaque anyway.
+\end{itemize}
