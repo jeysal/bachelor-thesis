@@ -73,3 +73,88 @@ The reasons for this decision are
   \item that users would still need to instantiate mock objects themselves,
     so the backing library would not be fully opaque anyway.
 \end{itemize}
+
+\subsection{Approaches}
+We will try out two different approaches to
+implementing interaction declaration and verification
+across different mocking libraries.
+
+\paragraph{Direct compilation}
+The first and perhaps most obvious approach, \textit{direct compilation},
+works by generating code that calls functions
+provided by the mocking library in use.
+
+A mocking library preset exports an \textit{interaction processor},
+which generates a statement for a declaration
+based on the parsed \textit{InteractionDeclaration},
+and a statement for a verification
+based on the \textit{mock object}.
+
+For example, the interaction declaration
+\begin{minted}{javascript}
+mock: 1 * fn();
+\end{minted}
+might be transformed to
+\begin{minted}{javascript}
+expect(fn).withoutArgs().times(1);
+\end{minted}
+for a fictional mocking library.
+The interaction verification
+\begin{minted}{javascript}
+verify: fn;
+\end{minted}
+might be transformed to:
+\begin{minted}{javascript}
+verify(fn);
+\end{minted}
+
+\paragraph{Runtime dispatch}
+The second approach, \textit{runtime dispatch},
+works by generating code that always makes the same call,
+but swaps out the \textit{interaction runtime adapter} that accepts the call
+depending on the mocking library in use.
+Each runtime adapter knows how to translate the generic
+declaration and verification calls to calls for the mocking library
+that it provides support for.
+
+A mocking library preset exports the name of the module
+that exports the interaction runtime adapter,
+so it can be imported in the generated code.
+
+The interaction declaration
+\begin{minted}{javascript}
+mock: 1 * fn();
+\end{minted}
+might be transformed to
+\begin{minted}{javascript}
+interactionRuntimeAdapter.declare({
+  kind: 'mock',
+  mockObject: fn,
+  args: [],
+  cardinality: 1,
+});
+\end{minted}
+and the interaction verification
+\begin{minted}{javascript}
+verify: fn;
+\end{minted}
+might be transformed to:
+\begin{minted}{javascript}
+interactionRuntimeAdapter.verify(mock)
+\end{minted}
+In addition, an import
+\begin{minted}{javascript}
+import interactionRuntimeAdapter
+  from '@spockjs/interaction-runtime-adapter-some-lib';
+\end{minted}
+needs to be added at the top of the file
+to select the mocking library.
+The actual calls to the mocking library
+happen inside the adapter with this approach.
+
+A variant of this approach would be to compile to calls
+to the interface of a common mocking library
+and provide adapters that translate from that library to others.
+Such adapters could perhaps be more reusable
+for other purposes outside of spockjs,
+but would take a lot of flexibility away from spockjs.
