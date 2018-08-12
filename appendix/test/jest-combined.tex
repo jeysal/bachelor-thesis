@@ -1,0 +1,30 @@
+\subsection*{Jest combined}
+
+\paragraph*{reports too few calls}
+\begin{minted}{javascript}
+const mock = jest.fn();
+mock: 1 * mock('a') >> 1337;
+mock: 4 * mock() >> 42;
+
+mock();
+mock('a');
+mock();
+mock();
+
+verify: mock;
+\end{minted}
+Throws
+\paragraph*{returns the values associated with the correct calls}
+\begin{minted}{javascript}
+const mock = jest.fn();
+mock: 1 * mock('a') >> 1337;
+mock: 4 * mock() >> 42;
+
+const one = mock();
+const two = mock('a');
+const three = mock();
+const four = mock();
+
+return [one, two, three, four];
+\end{minted}
+Returns: \code{[42, 1337, 42, 42]}

@@ -1,0 +1,26 @@
+\subsection*{Invalid block}
+
+\paragraph*{throws if a verification is not an expression statement}
+\begin{minted}{javascript}
+verify: if(true);
+\end{minted}
+\paragraph*{throws if a declaration is not an expression statement}
+\begin{minted}{javascript}
+stub: if(true);
+\end{minted}
+\paragraph*{throws if a declaration is a non-binary expression statement}
+\begin{minted}{javascript}
+stub: 42;
+\end{minted}
+\paragraph*{throws if a declaration does not have a function call}
+\begin{minted}{javascript}
+stub: asdf >> 42;
+\end{minted}
+\paragraph*{throws if a declaration has a binary expression with the wrong operator}
+\begin{minted}{javascript}
+stub: asdf() + 42;
+\end{minted}
+\paragraph*{throws if a combined declaration has a nested binary expression with the wrong operator}
+\begin{minted}{javascript}
+stub: 1 + asdf() >> 42;
+\end{minted}

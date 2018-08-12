@@ -1,0 +1,34 @@
+\subsection*{Sinon stubs}
+
+\paragraph*{stubs without parameters}
+\begin{minted}{javascript}
+const s = sinon.stub();
+stub: s() >> 42;
+return s();
+\end{minted}
+Returns: \code{42}
+\paragraph*{matches the stub call with the correct arguments}
+\begin{minted}{javascript}
+const s = sinon.stub();
+stub: {
+  s('a', 'b') >> 41;
+  s('b', 'c') >> 42;
+  s('b', 'c', 'd') >> 43;
+}
+return s('b', 'c');
+\end{minted}
+Returns: \code{42}
+\paragraph*{does not match a stub call with missing arguments}
+\begin{minted}{javascript}
+const s = sinon.stub();
+stub: s('a') >> 42;
+return s();
+\end{minted}
+Returns: \code{undefined}
+\paragraph*{does not match a stub call with incorrect arguments}
+\begin{minted}{javascript}
+const s = sinon.stub();
+stub: s('a') >> 42;
+return s('b');
+\end{minted}
+Returns: \code{undefined}

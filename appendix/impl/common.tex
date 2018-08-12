@@ -1,13 +1,6 @@
-\chapter*{Appendix}
-\addcontentsline{toc}{chapter}{Appendix}
-\pagestyle{plain}
-\setminted{samepage=no,fontsize=\ssmall}
+\subsection*{Common}
 
-% TODO this chapter contains the code that is directly relevant to the paper. explain section titles. some words on where to find the full code with a better reading experience...
-
-\section*{experimental-mocking-direct-compilation}
-
-\subsection*{packages/babel-plugin-spock/src/index.ts}
+\paragraph*{packages/babel-plugin-spock/src/index.ts}
 \begin{minted}{typescript}
 import { PluginObj } from '@babel/core';
 import { NodePath } from '@babel/traverse';
@@ -84,7 +77,7 @@ export default (babel: { types: typeof BabelTypes }): PluginObj => ({
 });
 \end{minted}
 
-\subsection*{packages/config/src/hooks/interaction.ts}
+\paragraph*{packages/config/src/hooks/interaction.ts}
 \begin{minted}{typescript}
 import * as BabelTypes from '@babel/types';
 
@@ -131,7 +124,7 @@ export type InteractionProcessor = (
 };
 \end{minted}
 
-\subsection*{packages/interaction-block/src/parser.ts}
+\paragraph*{packages/interaction-block/src/parser.ts}
 \begin{minted}{typescript}
 import { NodePath } from '@babel/traverse';
 import { BinaryExpression, Expression, Node } from '@babel/types';

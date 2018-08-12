@@ -1,0 +1,33 @@
+\section*{Test cases}
+This section lists the test cases that
+an interaction block implementation needs to pass.
+This encompasses
+\begin{itemize}
+  \item test cases with the preset for Jest mocks enabled,
+  \item test cases with the preset for Sinon.JS mocks enabled, and
+  \item common test cases for invalid interaction blocks.
+\end{itemize}
+
+Each test case
+--- apart from those for invalid blocks ---
+specifies the code that is transformed,
+and the result of executing the transformed code:
+\begin{itemize}
+  \item Its return value,
+  \item that it throws (with a sensible error message), or
+  \item that it does not throw.
+\end{itemize}
+
+\input{appendix/test/jest-stubs.tex}
+
+\input{appendix/test/jest-mocks.tex}
+
+\input{appendix/test/jest-combined.tex}
+
+\input{appendix/test/sinon-stubs.tex}
+
+\input{appendix/test/sinon-mocks.tex}
+
+\input{appendix/test/sinon-combined.tex}
+
+\input{appendix/test/invalid-block.tex}
