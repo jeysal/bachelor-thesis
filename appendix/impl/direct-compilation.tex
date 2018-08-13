@@ -1,2 +1,29 @@
 \subsection*{experimental-mocking-direct-compilation}
+
+\paragraph*{packages/preset-sinon-mocks/src/index.ts}
+\begin{minted}{typescript}
+import { InteractionProcessor } from '@spockjs/config';
+
+import interactionProcessor from '@spockjs/interaction-processor-sinon-mocks';
+
+export const assertionPostProcessors = [];
+
+export const interactionProcessors: InteractionProcessor[] = [
+  interactionProcessor,
+];
+\end{minted}
+
+\paragraph*{packages/preset-jest-mocks/src/index.ts}
+\begin{minted}{typescript}
+import { InteractionProcessor } from '@spockjs/config';
+
+import interactionProcessor from '@spockjs/interaction-processor-jest-mocks';
+
+export const assertionPostProcessors = [];
+
+export const interactionProcessors: InteractionProcessor[] = [
+  interactionProcessor,
+];
+\end{minted}
+
 % TODO

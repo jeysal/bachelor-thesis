@@ -1,0 +1,52 @@
+\section{Presets}
+With the direct compilation approach,
+the two mocking library presets
+\textit{@spockjs/preset-sinon-mocks} and
+\textit{@spockjs/preset-jest-mocks}
+each have to export an array of
+\textit{interaction processors}.
+An interaction processor has the following type signature:
+\begin{minted}{typescript}
+(
+  t: typeof BabelTypes,
+  config: InternalConfig
+) => {
+  primary: boolean;
+  declare(
+    interaction: InteractionDeclaration
+  ): BabelTypes.Statement;
+  verify(
+    mockObject: BabelTypes.Expression
+  ): BabelTypes.Statement;
+};
+\end{minted}
+
+The signature somewhat resembles that of
+the \textit{@spockjs/interaction-block} package itself
+in that it also offers the
+\textit{declare} and \textit{verify} operations.
+This is because \textit{@spockjs/interaction-block},
+aside from parsing interaction declarations,
+mostly just delegates them through with this approach,
+as we will see when finishing the implementation of that package soon.
+
+The interaction processor property \textit{primary} indicates
+whether the processor is meant for standalone use (\code{true}),
+as is the case for those implementing mocking library bindings,
+or it is an auxiliary processor (\code{false}),
+such as one that provides better integration with a test runner.
+Users will see an error when attempting to use interaction blocks
+without a primary interaction processor.
+
+The Sinon.JS and Jest mocking library presets
+do not contain the corresponding interaction processors themselves.
+Instead, like all such components of spockjs,
+including the similar assertion post processors,
+the interaction processors exist in the separate packages
+\textit{@spockjs/interaction-processor-sinon-mocks} and
+\textit{@spockjs/interaction-processor-jest-mocks},
+which allows for them to be easily combined in other presets.
+The \textit{@spockjs/preset-sinon-mocks} and
+\textit{@spockjs/preset-jest-mocks} packages
+simply import the interaction processors from those separate packages
+and re-export them in single-element arrays.
