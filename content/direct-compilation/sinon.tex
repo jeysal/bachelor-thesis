@@ -5,3 +5,37 @@ quite rich stub and mock API
 that we can leverage to make
 compiling interaction blocks
 to Sinon calls very straightforward.
+
+\subsection{Templates}
+In order to generate code that calls the Sinon API,
+we will need some more tooling.
+We have already created some AST nodes in other places such as identifiers,
+and even non-leaf nodes such as call expressions,
+but the chained calls to the fluent Sinon API
+require \textit{a lot} of nodes.
+Creating nodes via \code{t.identifier} and the like was fine
+for the so far mostly small structures like
+identifiers and simple call expressions,
+but it would be massively cumbersome to handle
+for larger tree structures.
+
+This is where \textit{babel-template} comes into play.
+\textit{babel-template} allows us to create AST nodes
+by writing them as source code:
+\autocite{BabelTemplateDoc}
+\begin{minted}{javascript}
+const buildRequire = template(`
+  const IMPORT_NAME = require(SOURCE);
+`);
+
+const requireDecl = buildRequire({
+  IMPORT_NAME: t.identifier('myModule'),
+  SOURCE: t.stringLiteral('my-module'),
+});
+\end{minted}
+Parts of the AST
+--- in the example above, \code{IMPORT_NAME} and \code{SOURCE} ---
+can be dynamically substituted with other nodes.
+This capability is commonly known as
+\textit{quasiquotes} or \textit{quasiquotation}.
+\autocite{LispQuasiquotation}
