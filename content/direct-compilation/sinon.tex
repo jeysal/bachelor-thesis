@@ -39,3 +39,40 @@ can be dynamically substituted with other nodes.
 This capability is commonly known as
 \textit{quasiquotes} or \textit{quasiquotation}.
 \autocite{LispQuasiquotation}
+
+\subsection{Code generation}
+Sinon is peculiar in that it has a notion of
+mock objects with methods of them
+as an alternative to plain mock functions:
+\autocite{SinonMockDoc}
+\begin{minted}{javascript}
+const obj = { method: () => {} };
+const mock = sinon.mock(obj);
+mock.expects("method").once().throws();
+\end{minted}
+If we see a member expression like
+\code{obj.method()}
+instead of just
+\code{func()},
+we assume that it is such a mock object
+and need to make sure that
+we generate the proper \code{expects} call
+like in the example above.
+
+In the following,
+we will focus on the most complex case:
+a combined interaction declaration
+(mocking and stubbing) with a
+function that is a member on a mock object, e.g.:
+\begin{minted}{javascript}
+1 * mock.method(42) >> 1337;
+\end{minted}
+All the other cases with
+stubbing/mocking only
+or simple functions
+instead of mock objects
+are effectively just
+boiled down versions of it.
+As usual, the full source code of
+\textit{@spockjs/interaction-processor-sinon-mocks}
+can be found in the appendix.
