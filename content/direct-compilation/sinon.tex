@@ -76,3 +76,85 @@ boiled down versions of it.
 As usual, the full source code of
 \textit{@spockjs/interaction-processor-sinon-mocks}
 can be found in the appendix.
+
+\paragraph{Declaration}
+The \textit{declare} function for this case starts by
+checking whether the interaction declaration is of type \textit{combined},
+whether the mock object is a member expression, and
+extracting the data from the declaration and member expression:
+\begin{minted}{javascript}
+interaction => {
+  const { mockObject, args } = interaction;
+
+  if (interaction.kind === 'combined') {
+    const { cardinality, returnValue } = interaction;
+
+    if (t.isMemberExpression(mockObject)) {
+      const {
+        object: mock,
+        property: method,
+        computed
+      } = mockObject;
+\end{minted}
+
+Before generating code,
+we need to do one more thing.
+Because the member expression could have a computed property name
+(\code{a["b"]} instead of \code{a.b})
+we cannot always simply wrap the name of the identifier
+in a string literal and pass that
+to the Sinon \textit{expects} function.
+In the case of a computed property name,
+we instead stringify it and pass it to \textit{expects}:
+\begin{minted}{javascript}
+      const methodName = computed
+        ? t.callExpression(
+            t.identifier('String'),
+            [method]
+          )
+        : t.stringLiteral(
+            (method as Identifier).name
+          );
+\end{minted}
+
+Finally, we instantiate the Babel template
+for a combined interaction declaration
+with the nodes we have extracted and computed:
+\begin{minted}{javascript}
+      return declareMockAndStubInteraction({
+        MOCK: mock,
+        METHOD_NAME: methodName,
+        ARGS: args,
+        CARDINALITY: cardinality,
+        RETURN_VALUE: returnValue,
+      });
+    }
+  }
+}
+\end{minted}
+
+The corresponding template is:
+\begin{minted}{javascript}
+const declareMockAndStubInteraction = template(`
+  MOCK
+    .expects(METHOD_NAME)
+    .withArgs(ARGS)
+    .atLeast(CARDINALITY)
+    .atMost(CARDINALITY)
+    .returns(RETURN_VALUE);
+`);
+\end{minted}
+The other templates for the simpler cases
+\begin{itemize}
+  \item omit the \textit{expects} for plain mock functions,
+  \item omit the \textit{atLeast} and \textit{atMost} for stub-only declarations, or
+  \item omit the \textit{returns} for mock-only declarations.
+\end{itemize}
+
+We could generate the templates dynamically
+instead of writing them out for all the cases,
+but it does not appear to be worthwile for the small number of cases.
+Also, mocks and stubs are considered different object types by Sinon,
+so even though parts of the API --- like \textit{withArgs} --- are identical,
+it would be awkward to treat them as the same thing
+and just plug in function calls to our liking.
