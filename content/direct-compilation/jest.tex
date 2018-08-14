@@ -1,0 +1,38 @@
+\section{Jest}
+Jest only provides a few simple and non-chainable mock function matchers,
+such as \code{toBeCalled()} and \code{toBeCalledWith(arg0, arg1)},
+out of the box.
+However, Jest mocks do record and provide access to
+all of the calls to them that occurred via
+\code{mockFn.mock.calls}.
+We can build our own simplistic call matching logic
+on top of that interface,
+although it means that we will need to
+generate a lot more and a lot more complex code
+compared to the Sinon interaction processor.
+
+The basic idea of what the generated code should do
+to be able to memorize interaction declarations
+and later access their return values for stubbing
+and verify them by comparing to the actual calls that occurred for mocking
+is the following:
+\begin{enumerate}
+  \item Store all declarations
+    --- including arguments, cardinality and return value ---
+    in an array hidden inside the mock.
+    In this case, the key to access the array on the mock will be:
+    \begin{minted}[fontsize=\footnotesize]{javascript}
+const symbol = 'Symbol.for("spockjsInteractDecls")';
+    \end{minted}
+  \item When the function is called,
+    stub out its return value by
+    looking for an interaction declaration
+    with the correct arguments in the store
+    and using the return value specified in that declaration.
+  \item When the mock is verified,
+    iterate through those of its interaction declarations
+    that have a cardinality specified
+    and for each one of them,
+    ensure that exactly the specified number of calls
+    with the correct arguments has occurred.
+\end{enumerate}
