@@ -158,3 +158,17 @@ Also, mocks and stubs are considered different object types by Sinon,
 so even though parts of the API --- like \textit{withArgs} --- are identical,
 it would be awkward to treat them as the same thing
 and just plug in function calls to our liking.
+
+\paragraph{Verification}
+We recorded all declarations by
+converting them into a format understood by Sinon
+and passing them to the Sinon mock object functions.
+Given that the mock object now already holds all the state
+that is required to compare the expected and actual calls,
+we can simply generate a call to the \textit{verify} function
+of the mock object using the following template:
+\begin{minted}{javascript}
+const verify = template(`
+  MOCK.verify();
+`);
+\end{minted}
