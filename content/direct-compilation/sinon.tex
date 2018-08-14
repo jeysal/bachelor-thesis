@@ -6,41 +6,6 @@ that we can leverage to make
 compiling interaction blocks
 to Sinon calls very straightforward.
 
-\subsection{Templates}
-In order to generate code that calls the Sinon API,
-we will need some more tooling.
-We have already created some AST nodes in other places such as identifiers,
-and even non-leaf nodes such as call expressions,
-but the chained calls to the fluent Sinon API
-require \textit{a lot} of nodes.
-Creating nodes via \code{t.identifier} and the like was fine
-for the so far mostly small structures like
-identifiers and simple call expressions,
-but it would be massively cumbersome to handle
-for larger tree structures.
-
-This is where \textit{babel-template} comes into play.
-\textit{babel-template} allows us to create AST nodes
-by writing them as source code:
-\autocite{BabelTemplateDoc}
-\begin{minted}{javascript}
-const buildRequire = template(`
-  const IMPORT_NAME = require(SOURCE);
-`);
-
-const requireDecl = buildRequire({
-  IMPORT_NAME: t.identifier('myModule'),
-  SOURCE: t.stringLiteral('my-module'),
-});
-\end{minted}
-Parts of the AST
---- in the example above, \code{IMPORT_NAME} and \code{SOURCE} ---
-can be dynamically substituted with other nodes.
-This capability is commonly known as
-\textit{quasiquotes} or \textit{quasiquotation}.
-\autocite{LispQuasiquotation}
-
-\subsection{Code generation}
 Sinon is peculiar in that it has a notion of
 mock objects with methods of them
 as an alternative to plain mock functions:
@@ -77,7 +42,7 @@ As usual, the full source code of
 \textit{@spockjs/interaction-processor-sinon-mocks}
 can be found in the appendix.
 
-\paragraph{Declaration}
+\subsection{Declaration}
 The \textit{declare} function for this case starts by
 checking whether the interaction declaration is of type \textit{combined},
 whether the mock object is a member expression, and
@@ -159,7 +124,7 @@ so even though parts of the API --- like \textit{withArgs} --- are identical,
 it would be awkward to treat them as the same thing
 and just plug in function calls to our liking.
 
-\paragraph{Verification}
+\subsection{Verification}
 We recorded all declarations by
 converting them into a format understood by Sinon
 and passing them to the Sinon mock object functions.
