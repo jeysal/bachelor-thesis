@@ -97,3 +97,63 @@ so that for instance the following declaration and call would match:
 stub: s({}) >> 42;
 s({}) === 42;
 \end{minted}
+
+\subsection{Verification}
+The \textit{verify} template also performs the sanity check
+to ensure that given value is actually a Jest mock function
+and afterwards applies the verification algorithm as described earlier:
+\begin{enumerate}
+  \item Retrieve the interaction declarations from the mock.
+  \item Filter out all the interaction declarations that have no cardinality
+    (i.e. that are for stubbing only).
+  \item For each remaining declaration:
+    \begin{enumerate}
+      \item Retrieve the actual occurred calls from the mock.
+      \item Filter out calls with arguments that differ from
+        the \textit{args} of the interaction declaration.
+      \item Count the remaining calls.
+      \item If the count is not equal to
+        the \textit{cardinality} of the interaction declaration,
+        throw an error.
+    \end{enumerate}
+\end{enumerate}
+
+The following template implements this algorithm:
+\begin{minted}[fontsize=\scriptsize]{javascript}
+const verify = template(`
+  // ...
+  (MOCK[${symbol}] || [])
+    .filter(({ cardinality }) => cardinality != null)
+    .forEach(({ args: expected, cardinality: expectedTimes }) => {
+      const __spockjs_actualTimes = MOCK.mock.calls.filter(actual =>
+        ${deepStrictEqual}([...actual], [...expected]),
+      ).length;
+      if (__spockjs_actualTimes !== expectedTimes) {
+        const __spockjs_args = ${prettyFormat}(expected);
+        throw new Error(
+          \`Expected \${expectedTimes} call(s) to mock '\${MOCK_NAME}' \` +
+            \`with arguments \${__spockjs_args}, \` +
+            \`but received \${__spockjs_actualTimes} such call(s).\`,
+        );
+      }
+    });
+`);
+\end{minted}
+
+When instantiating the template,
+the \textit{MOCK\_NAME} placeholder
+will be replaced with a string literal
+containing the printed
+\textit{mockObject} AST node.
+The error message is thus made more useful
+by referring to the mock like it was specified
+in the original interaction declaration.
+For example, the code
+\begin{minted}{javascript}
+mock: 1 * mock();
+verify: (true ? mock: other);
+\end{minted}
+would result in the error message:
+\begin{minted}{text}
+Expected 1 call(s) to mock '(true ? mock: other)' ...
+\end{minted}
