@@ -36,3 +36,36 @@ const symbol = 'Symbol.for("spockjsInteractDecls")';
     ensure that exactly the specified number of calls
     with the correct arguments has occurred.
 \end{enumerate}
+
+\subsection{Declaration}
+The Jest interaction processor generates
+not just a single statement like the one for Sinon,
+but a block statement composed of two parts:
+The \textit{declareInteraction} template and
+the \textit{initStub} template.
+
+The \textit{declareInteraction} template first
+performs a sanity check to ensure that
+the \textit{mockObject} from the user's interaction declaration
+is actually a Jest mock function and
+prints an error if that is not the case.
+Afterwards, it adds a declaration to the store of the mock,
+if necessary initializing the store with an empty array beforehand:
+\begin{minted}{javascript}
+const declareInteraction = template(`
+  // ...
+  MOCK[${symbol}] = [
+    ...(MOCK[${symbol}] || []),
+    {
+      args: ARGS,
+      cardinality: CARDINALITY,
+      returnValue: RETURN_VALUE,
+    }
+  ];
+`);
+\end{minted}
+When the template is instantiated for a concrete interaction declaration,
+the mock, args, cardinality, and return value placeholders
+are filled with the nodes from the interaction declaration,
+with the possibility of one of the latter two being \code{undefined} identifiers
+if the declaration was not a combined interaction declaration.
