@@ -69,3 +69,31 @@ the mock, args, cardinality, and return value placeholders
 are filled with the nodes from the interaction declaration,
 with the possibility of one of the latter two being \code{undefined} identifiers
 if the declaration was not a combined interaction declaration.
+
+The \textit{initStub} template uses the \textit{mockImplementation}
+to inject behavior into the mock function.
+Whenever it is called after this initialization,
+it will look for an interaction declaration
+with matching arguments in the store
+and return the associated return value for that interaction,
+defaulting to \code{undefined} if no declaration matches:
+\begin{minted}{javascript}
+const initStub = template(`
+  STUB.mockImplementation(
+    (...actual) =>
+      (
+        STUB[${symbol}].find(({ args: expected }) =>
+          ${deepStrictEqual}(actual, expected),
+        ) || {}
+      ).returnValue,
+  );
+`);
+\end{minted}
+The \textit{deepStrictEqual} helper is an imported function
+that compares the contents of object and array structures
+instead of their shallow identities,
+so that for instance the following declaration and call would match:
+\begin{minted}{javascript}
+stub: s({}) >> 42;
+s({}) === 42;
+\end{minted}
