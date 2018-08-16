@@ -1,9 +1,11 @@
 \section{Jest}
-Jest only provides a few simple and non-chainable mock function matchers,
-such as \code{toBeCalled()} and \code{toBeCalledWith(arg0, arg1)},
-out of the box.
-However, Jest mocks do record and provide access to
-all of the calls to them that occurred via
+Jest out of the box only provides a few
+simple and non-chainable mock function matchers,
+such as \code{expect(mockFn).toBeCalled()}
+and the more specific \code{.toBeCalledWith(arg0, arg1)}.
+However, Jest mocks do record
+all of the calls to them
+and provide access to them via
 \code{mockFn.mock.calls}.
 We can build our own simplistic call matching logic
 on top of that interface,
@@ -12,7 +14,7 @@ generate a lot more and a lot more complex code
 compared to the Sinon interaction processor.
 
 The basic idea of what the generated code should do
-to be able to memorize interaction declarations
+in order to be able to memorize interaction declarations
 and later access their return values for stubbing
 and verify them by comparing to the actual calls that occurred for mocking
 is the following:
@@ -32,6 +34,7 @@ const symbol = 'Symbol.for("spockjsInteractDecls")';
   \item When the mock is verified,
     iterate through those of its interaction declarations
     that have a cardinality specified
+    (i.e. that are mocking or combined declarations)
     and for each one of them,
     ensure that exactly the specified number of calls
     with the correct arguments has occurred.
@@ -53,7 +56,7 @@ Afterwards, it adds a declaration to the store of the mock,
 if necessary initializing the store with an empty array beforehand:
 \begin{minted}{javascript}
 const declareInteraction = template(`
-  // ...
+  // sanity check ...
   MOCK[${symbol}] = [
     ...(MOCK[${symbol}] || []),
     {
@@ -66,11 +69,12 @@ const declareInteraction = template(`
 \end{minted}
 When the template is instantiated for a concrete interaction declaration,
 the mock, args, cardinality, and return value placeholders
-are filled with the nodes from the interaction declaration,
+are filled with the AST nodes from the interaction declaration,
 with the possibility of one of the latter two being \code{undefined} identifiers
 if the declaration was not a combined interaction declaration.
 
-The \textit{initStub} template uses the \textit{mockImplementation}
+The \textit{initStub} template uses
+the \textit{mockImplementation} feature of Jest mock functions
 to inject behavior into the mock function.
 Whenever it is called after this initialization,
 it will look for an interaction declaration
@@ -105,10 +109,10 @@ and afterwards applies the verification algorithm as described earlier:
 \begin{enumerate}
   \item Retrieve the interaction declarations from the mock.
   \item Filter out all the interaction declarations that have no cardinality
-    (i.e. that are for stubbing only).
-  \item For each remaining declaration:
+    (i.e. that are meant for stubbing only).
+  \item For each remaining interaction declaration:
     \begin{enumerate}
-      \item Retrieve the actual occurred calls from the mock.
+      \item Retrieve the calls that actually occurred from the mock.
       \item Filter out calls with arguments that differ from
         the \textit{args} of the interaction declaration.
       \item Count the remaining calls.
@@ -121,7 +125,7 @@ and afterwards applies the verification algorithm as described earlier:
 The following template implements this algorithm:
 \begin{minted}[fontsize=\scriptsize]{javascript}
 const verify = template(`
-  // ...
+  // sanity check ...
   (MOCK[${symbol}] || [])
     .filter(({ cardinality }) => cardinality != null)
     .forEach(({ args: expected, cardinality: expectedTimes }) => {
@@ -150,6 +154,7 @@ by referring to the mock like it was specified
 in the original interaction declaration.
 For example, the code
 \begin{minted}{javascript}
+const mock = jest.fn();
 mock: 1 * mock();
 verify: (true ? mock: other);
 \end{minted}

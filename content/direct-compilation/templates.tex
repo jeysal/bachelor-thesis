@@ -26,12 +26,12 @@ const requireDecl = buildRequire({
   SOURCE: t.stringLiteral('my-module'),
 });
 \end{minted}
+This capability is also known as
+\textit{quasiquotes} or \textit{quasiquotation}.
+\autocite{LispQuasiquotation}
 Parts of the AST
 --- in the example above, \code{IMPORT_NAME} and \code{SOURCE} ---
 can be dynamically substituted with other nodes.
-This capability is commonly known as
-\textit{quasiquotes} or \textit{quasiquotation}.
-\autocite{LispQuasiquotation}
 We will use this feature extensively for the implementation
 of both the Sinon.JS and the Jest interaction processors
 with the direct compilation approach.

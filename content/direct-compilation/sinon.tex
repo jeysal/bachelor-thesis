@@ -6,8 +6,9 @@ that we can leverage to make
 compiling interaction blocks
 to Sinon calls very straightforward.
 
+On the other hand,
 Sinon is peculiar in that it has a notion of
-mock objects with methods of them
+mock objects with methods on them
 as an alternative to plain mock functions:
 \autocite{SinonMockDoc}
 \begin{minted}{javascript}
@@ -19,7 +20,7 @@ If we see a member expression like
 \code{obj.method()}
 instead of just
 \code{func()},
-we assume that it is such a mock object
+we can assume that it is such a mock object
 and need to make sure that
 we generate the proper \code{expects} call
 like in the example above.
@@ -27,8 +28,8 @@ like in the example above.
 In the following,
 we will focus on the most complex case:
 a combined interaction declaration
-(mocking and stubbing) with a
-function that is a member on a mock object, e.g.:
+(i.e. mocking and stubbing) with a
+function that is a member of a mock object, e.g.:
 \begin{minted}{javascript}
 1 * mock.method(42) >> 1337;
 \end{minted}
@@ -37,7 +38,7 @@ stubbing/mocking only
 or simple functions
 instead of mock objects
 are effectively just
-boiled down versions of it.
+boiled down versions of this case.
 As usual, the full source code of
 \textit{@spockjs/interaction-processor-sinon-mocks}
 can be found in the appendix.
@@ -47,7 +48,7 @@ The \textit{declare} function for this case starts by
 checking whether the interaction declaration is of type \textit{combined},
 whether the mock object is a member expression, and
 extracting the data from the declaration and member expression:
-\begin{minted}{javascript}
+\begin{minted}{typescript}
 interaction => {
   const { mockObject, args } = interaction;
 
@@ -71,7 +72,7 @@ in a string literal and pass that
 to the Sinon \textit{expects} function.
 In the case of a computed property name,
 we instead stringify it and pass it to \textit{expects}:
-\begin{minted}{javascript}
+\begin{minted}{typescript}
       const methodName = computed
         ? t.callExpression(
             t.identifier('String'),
@@ -85,7 +86,7 @@ we instead stringify it and pass it to \textit{expects}:
 Finally, we instantiate the Babel template
 for a combined interaction declaration
 with the nodes we have extracted and computed:
-\begin{minted}{javascript}
+\begin{minted}{typescript}
       return declareMockAndStubInteraction({
         MOCK: mock,
         METHOD_NAME: methodName,
