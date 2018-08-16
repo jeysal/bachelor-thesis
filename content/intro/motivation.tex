@@ -6,7 +6,7 @@ from the programming language, standard library, or third party tools.
 The two types of such testing tools we will primarily look at are
 \begin{itemize}
   \item \textit{assertion libraries} and
-  \item \textit{stubbing / mocking libraries}.
+  \item \textit{(stubbing and) mocking libraries}.
 \end{itemize}
 Both can be standalone or part of a greater testing framework or utility library.
 The former are used to specify a part of the \textit{test oracle},
@@ -22,7 +22,7 @@ or in a more classical style as plain calls to an assert function:
 expect(1).to.equal(1);
 assert(1 === 1);
 \end{minted}
-Stubbing and mocking libraries tend to follow a similar API design approach:
+Mocking libraries tend to follow a somewhat similar API design approach:
 \autocite{SinonStubDoc}\autocite{SinonMockDoc}
 \begin{minted}{javascript}
 const doubleStub = stub().withArgs(21).returns(42);
