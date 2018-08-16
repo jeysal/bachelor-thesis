@@ -19,7 +19,7 @@ dummies, fakes, stubs, spies and mocks
 \autocite{SpockFrameworkDoc}\autocite{JestMockFunctions}
 
 \begin{figure}
-  \begin{minted}{javascript}
+  \begin{minted}[linenos]{javascript}
 const subtract = add => (a, b) => add(a, -b);
 
 const addCalls = [];
@@ -31,7 +31,9 @@ assert(subtract(addMock)(3, 2) === 1);
 assert.deepStrictEqual(addCalls, [{ a: 3, b: -2 }]);
   \end{minted}
   \caption{
-    Using a mock to verify that \code{subtract}
+    Using a mock defined in lines 4 to 6
+    to verify in line 9
+    that the \code{subtract} function defined in line 1
     actually made a call to \code{add}.
     Note that this concrete example would typically be considered
     a significant overspecification in practice.
@@ -44,7 +46,7 @@ by eliminating the manual argument capturing from the test code
 and providing call verification helper functions.
 
 \begin{figure}
-  \begin{minted}{javascript}
+  \begin{minted}[linenos]{javascript}
 const subtract = add => (a, b) => add(a, -b);
 
 const addMock = jest.fn(

@@ -28,7 +28,7 @@ a function returning an object with arbitrary visitor functions.
 The following is the full Babel plugin to accomplish
 the strict equality swap example transformation
 as described in Chapter~\ref{chap:Ast}:
-\begin{minted}{javascript}
+\begin{minted}[linenos]{javascript}
 export default ({ types: t }) => ({
   visitor: {
     BinaryExpression({ node }) {
@@ -41,7 +41,7 @@ export default ({ types: t }) => ({
 \end{minted}
 
 The \code{types} property of the object passed to the plugin
-is not used in this particular plugin,
+in line 1 is not used in this particular plugin,
 but is usually one of the most important helpers,
 providing creation methods for each type of node
 and the corresponding type check methods:
@@ -53,10 +53,11 @@ The visitor object returned from the plugin
 can contain a visitor method for each node type (capitalized),
 but it may be partial, i.e.
 it does not have to implement methods for all of the more than 200 node types.
-In this case, we only provide a visitor for binary expressions.
+In this case, we only provide a visitor for binary expressions in lines 3 to 7.
 The visitor method receives the current \code{path} object as its first parameter,
 which we will later take a closer look at,
-but in this case, we extract only the binary expression node from it.
+but in this case,
+we extract only the binary expression node from it in line 3.
 There is also a second \code{state} parameter
 that we can disregard here, but it is for example needed
 to access user-supplied configuration options that a plugin might offer.

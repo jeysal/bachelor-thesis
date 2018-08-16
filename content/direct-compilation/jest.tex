@@ -47,14 +47,14 @@ but a block statement composed of two parts:
 The \textit{declareInteraction} template and
 the \textit{initStub} template.
 
-The \textit{declareInteraction} template first
+The \textit{declareInteraction} template shown below first
 performs a sanity check to ensure that
 the \textit{mockObject} from the user's interaction declaration
 is actually a Jest mock function and
 prints an error if that is not the case.
-Afterwards, it adds a declaration to the store of the mock,
-if necessary initializing the store with an empty array beforehand:
-\begin{minted}{javascript}
+Afterwards, it adds a declaration to the store of the mock in lines 3 to 10,
+if necessary initializing the store with an empty array beforehand in line 4:
+\begin{minted}[linenos]{javascript}
 const declareInteraction = template(`
   // sanity check ...
   MOCK[${symbol}] = [
@@ -73,15 +73,15 @@ are filled with the AST nodes from the interaction declaration,
 with the possibility of one of the latter two being \code{undefined} identifiers
 if the declaration was not a combined interaction declaration.
 
-The \textit{initStub} template uses
+The \textit{initStub} template shown below uses
 the \textit{mockImplementation} feature of Jest mock functions
 to inject behavior into the mock function.
 Whenever it is called after this initialization,
 it will look for an interaction declaration
-with matching arguments in the store
+with matching arguments in the store in lines 5 to 7
 and return the associated return value for that interaction,
 defaulting to \code{undefined} if no declaration matches:
-\begin{minted}{javascript}
+\begin{minted}[linenos]{javascript}
 const initStub = template(`
   STUB.mockImplementation(
     (...actual) =>
@@ -93,7 +93,7 @@ const initStub = template(`
   );
 `);
 \end{minted}
-The \textit{deepStrictEqual} helper is an imported function
+The \textit{deepStrictEqual} helper used in line 6 is an imported function
 that compares the contents of object and array structures
 instead of their shallow identities,
 so that for instance the following declaration and call would match:
@@ -103,27 +103,27 @@ s({}) === 42;
 \end{minted}
 
 \subsection{Verification}
-The \textit{verify} template also performs the sanity check
+The \textit{verify} template shown below also performs the sanity check
 to ensure that given value is actually a Jest mock function
 and afterwards applies the verification algorithm as described earlier:
 \begin{enumerate}
-  \item Retrieve the interaction declarations from the mock.
+  \item Retrieve the interaction declarations from the mock (line 3).
   \item Filter out all the interaction declarations that have no cardinality
-    (i.e. that are meant for stubbing only).
-  \item For each remaining interaction declaration:
+    (i.e. that are meant for stubbing only, line 4).
+  \item For each remaining interaction declaration (line 5):
     \begin{enumerate}
-      \item Retrieve the calls that actually occurred from the mock.
+      \item Retrieve the calls that actually occurred from the mock (line 6).
       \item Filter out calls with arguments that differ from
-        the \textit{args} of the interaction declaration.
-      \item Count the remaining calls.
+        the \textit{args} of the interaction declaration (lines 6 to 8).
+      \item Count the remaining calls (line 8).
       \item If the count is not equal to
-        the \textit{cardinality} of the interaction declaration,
-        throw an error.
+        the \textit{cardinality} of the interaction declaration (line 9),
+        throw an error (lines 10 to 15).
     \end{enumerate}
 \end{enumerate}
 
 The following template implements this algorithm:
-\begin{minted}[fontsize=\scriptsize]{javascript}
+\begin{minted}[linenos,fontsize=\scriptsize]{javascript}
 const verify = template(`
   // sanity check ...
   (MOCK[${symbol}] || [])
@@ -145,7 +145,7 @@ const verify = template(`
 \end{minted}
 
 When instantiating the template,
-the \textit{MOCK\_NAME} placeholder
+the \textit{MOCK\_NAME} placeholder in line 12
 will be replaced with a string literal
 containing the printed
 \textit{mockObject} AST node.

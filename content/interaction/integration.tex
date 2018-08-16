@@ -36,7 +36,7 @@ Then, we add if statements that handle the new block types
 right below the assertion block handling
 (after line 51 in the plugin source code that was
 previously shown in Figure~\ref{fig:BabelPluginSpockBefore}):
-\begin{minted}[fontsize=\scriptsize]{typescript}
+\begin{minted}[linenos,fontsize=\scriptsize]{typescript}
 // interaction block
 else if (interactionDeclarationLabels.includes(label)) {
   transformLabeledBlockOrSingle(

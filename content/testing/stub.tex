@@ -10,7 +10,7 @@ and testing them requires stubs for their dependencies
 that are not yet implemented in full detail.
 
 \begin{figure}
-  \begin{minted}{javascript}
+  \begin{minted}[linenos]{javascript}
 const subtract = add => (a, b) => add(a, -b);
 
 const addStub = (a, b) => (a === 3 && b === -2 ? 1 : 0);
@@ -20,11 +20,11 @@ assert(subtract(addStub)(3, 2) === 1);
   \caption{
     In this somewhat contrived stubbing example,
     the \code{add} function,
-    a dependency of the \code{subtract} function,
-    is being stubbed with the \code{addStub} function,
+    a dependency of the \code{subtract} function defined in line 1,
+    is being stubbed with the \code{addStub} function defined in line 3,
     which does not actually perform any addition logic,
     but instead only responds to a certain call with a canned answer.
-    This way, \code{subtract} is tested in isolation,
+    This way, \code{subtract} can be tested in isolation in line 5,
     without an actual implementation of \code{add}.
   }\label{fig:TestStub}
 \end{figure}

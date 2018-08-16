@@ -31,7 +31,8 @@ the call should return \code{true}.
 Interaction declarations for stubbing usually appear in a \code{setup} block
 to prepare the mock object for usage in the following \code{when} or \code{expect} block.
 
-The `stub' example in Figure~\ref{fig:SpockTestExample}
+The `stub' example
+in lines 39 to 47 of Figure~\ref{fig:SpockTestExample}
 also uses the special underscore (\code{_}) identifier.
 Used as a method argument, it denotes `any argument'
 and thus makes the stub from the example return \code{true}
@@ -39,7 +40,8 @@ on every single-argument call to its \code{receive} method.
 
 \paragraph{Mocking}
 To setup up expectations on a mock object,
-the \textit{multiplication operator} (\code{*}) can be used:
+the \textit{multiplication operator} (\code{*}) can be used as shown
+in lines 49 to 56 of Figure~\ref{fig:SpockTestExample}:
 \begin{minted}{groovy}
 1 * subscriber0.receive("msg")
 \end{minted}

@@ -6,15 +6,16 @@ This parser already makes up the largest portion of the
 \textit{@spockjs/interaction-block} package.
 We can now implement the rest of the package.
 
-The outer function,
+The outer function shown below,
 having received the Babel \textit{types} helper
-and the spockjs configuration object,
+and the spockjs configuration object in line 1,
 extracts the interaction processors from the configuration
-and prepares them for use in a \code{processors} array.
+and prepares them for use in a \code{processors} array in lines 2 to 4.
 It also validates that the config has at least one
-primary interaction processor to make sure
-the user did not forget to enable a preset for their mocking library:
-\begin{minted}[fontsize=\scriptsize]{typescript}
+primary interaction processor in lines 5 to 7
+to make sure the user did not forget
+to enable a preset for their mocking library:
+\begin{minted}[linenos,fontsize=\scriptsize]{typescript}
 export default (t: typeof BabelTypes, config: InternalConfig) => {
   const processors = config.hooks.interactionProcessors.map(processor =>
     processor(t, config),
@@ -30,19 +31,21 @@ export default (t: typeof BabelTypes, config: InternalConfig) => {
 }
 \end{minted}
 
-The \textit{declare} function first ensures that
-the interaction declaration block has the expected structure
-of a binary expression statement.
-If it does, the parser is called
+The \textit{declare} function as shown below
+first ensures that the interaction declaration block
+has the expected structure of a binary expression statement
+in lines 2 to 7.
+If it does, in line 8 the parser is called
 to obtain the interaction declaration,
 which is then passed to every
-interaction processor.
+interaction processor in line 10.
 The collective statement nodes returned from
 the declaration functions of the processors
-are used to replace the interaction declaration block.
+are used to replace the interaction declaration block
+in lines 9 to 11.
 The following code shows the \textit{declare} function implementation,
 eliding error case handling:
-\begin{minted}[fontsize=\scriptsize]{typescript}
+\begin{minted}[linenos,fontsize=\scriptsize]{typescript}
 (statementPath: NodePath<BabelTypes.Statement>) => {
   if (statementPath.isExpressionStatement()) {
     const expressionPath = statementPath.get('expression') as NodePath<
@@ -64,7 +67,7 @@ the \textit{verify} function just replaces the interaction verification block
 with the collective statement nodes returned from
 the verification functions of the processors
 applied to the mock object expression:
-\begin{minted}[fontsize=\scriptsize]{typescript}
+\begin{minted}[linenos,fontsize=\scriptsize]{typescript}
 (statementPath: NodePath<BabelTypes.Statement>) => {
   if (statementPath.isExpressionStatement()) {
     statementPath.replaceWithMultiple(

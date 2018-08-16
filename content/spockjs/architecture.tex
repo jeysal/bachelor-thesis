@@ -45,7 +45,7 @@ To make Jest print only the error message supplied by spockjs,
 the preset exports the \textit{@spockjs/assertion-post-processor-regular-errors} hook,
 which wraps the assertion in a try-catch block that catches the \code{AssertionError}
 and rethrows a regular \code{Error}:
-\begin{minted}{javascript}
+\begin{minted}[linenos]{javascript}
 try {
   assert(true);
 } catch(e) {

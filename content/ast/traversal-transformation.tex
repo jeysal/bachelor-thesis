@@ -47,7 +47,7 @@ which we can retrieve from the \code{type} property
 with many other languages and AST formats.
 
 \begin{figure}
-  \begin{minted}{javascript}
+  \begin{minted}[linenos]{javascript}
 switch (node.type) {
   case 'Identifier':
     console.log(node.name);
@@ -83,7 +83,7 @@ We implement it in each node type class
 and let the language dynamically dispatch for us.
 
 \begin{figure}
-  \begin{minted}{typescript}
+  \begin{minted}[linenos]{typescript}
 interface Node {
   handle(): void;
 }
@@ -122,13 +122,14 @@ as shown in Figure~\ref{fig:TreeNodeVisitorPattern}.
 \autocite{DesignPatterns}
 After dispatching to the \code{accept} method
 of the current node type,
-we further delegate to the \textit{visitor} object,
+we further delegate to the \textit{visitor} object
+in lines 7 and 13,
 which provides a method to handle each node type,
 including the one for the now well-known type
 of the current node \code{this}.
 
 \begin{figure}
-  \begin{minted}{typescript}
+  \begin{minted}[linenos]{typescript}
 interface Node {
   accept(v: Visitor): void;
 }

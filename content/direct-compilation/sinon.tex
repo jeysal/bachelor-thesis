@@ -45,10 +45,11 @@ can be found in the appendix.
 
 \subsection{Declaration}
 The \textit{declare} function for this case starts by
-checking whether the interaction declaration is of type \textit{combined},
-whether the mock object is a member expression, and
-extracting the data from the declaration and member expression:
-\begin{minted}{typescript}
+checking whether the interaction declaration is of type \textit{combined} in line 4,
+whether the mock object is a member expression in line 7, and
+extracting the data from the declaration and member expression
+in lines 2 and 5 and 8 to 12:
+\begin{minted}[linenos]{typescript}
 interaction => {
   const { mockObject, args } = interaction;
 
@@ -69,10 +70,12 @@ Because the member expression could have a computed property name
 (\code{a["b"]} instead of \code{a.b})
 we cannot always simply wrap the name of the identifier
 in a string literal and pass that
-to the Sinon \textit{expects} function.
+to the Sinon \textit{expects} function
+as shown in lines 18 to 20.
 In the case of a computed property name,
-we instead stringify it and pass it to \textit{expects}:
-\begin{minted}{typescript}
+we instead stringify it and pass it to \textit{expects}
+in lines 14 to 17:
+\begin{minted}[linenos,firstnumber=last]{typescript}
       const methodName = computed
         ? t.callExpression(
             t.identifier('String'),
@@ -86,7 +89,7 @@ we instead stringify it and pass it to \textit{expects}:
 Finally, we instantiate the Babel template
 for a combined interaction declaration
 with the nodes we have extracted and computed:
-\begin{minted}{typescript}
+\begin{minted}[linenos,firstnumber=last]{typescript}
       return declareMockAndStubInteraction({
         MOCK: mock,
         METHOD_NAME: methodName,
@@ -100,7 +103,7 @@ with the nodes we have extracted and computed:
 \end{minted}
 
 The corresponding template is:
-\begin{minted}{javascript}
+\begin{minted}[linenos]{javascript}
 const declareMockAndStubInteraction = template(`
   MOCK
     .expects(METHOD_NAME)

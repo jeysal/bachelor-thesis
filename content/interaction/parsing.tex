@@ -4,7 +4,8 @@ is parsing the interaction declaration.
 The three different interaction declaration types defined by the syntax
 are represented as a tagged union \code{InteractionDeclaration}
 with the discriminator property \code{kind}
-as shown in Figure~\ref{fig:InteractionDeclarationType}.
+as shown in lines 7 and 12 and 17
+of Figure~\ref{fig:InteractionDeclarationType}.
 The parser we will now build has the following function signature:
 \begin{minted}{typescript}
 (NodePath<BinaryExpression>) => InteractionDeclaration;
@@ -13,7 +14,7 @@ In the following, we will use pseudocode to build the parser top-to-bottom.
 The full source code is included in the appendix.
 
 \begin{figure}
-  \begin{minted}[fontsize=\scriptsize]{typescript}
+  \begin{minted}[linenos,fontsize=\scriptsize]{typescript}
 export interface BaseInteractionDeclaration {
   mockObject: BabelTypes.Expression;
   args: (BabelTypes.Expression | BabelTypes.SpreadElement)[];
@@ -47,9 +48,9 @@ export type InteractionDeclaration =
 The entry point function \code{parseInteractionDeclaration}
 looks at the operator used in the top-level binary expression
 and decides whether the input is
-a mock interaction declaration with operator \code{'*'}
-or a stub or combined interaction declaration with operator \code{'>>'}:
-\begin{minted}[fontsize=\footnotesize]{text}
+a mock interaction declaration with operator \code{'*'} (line 3)
+or a stub or combined interaction declaration with operator \code{'>>'} (line 5):
+\begin{minted}[linenos,fontsize=\footnotesize]{text}
 parseInteractionDeclaration(expressionPath):
   switch (expressionPath.node.operator)
     case '*'
@@ -60,10 +61,12 @@ parseInteractionDeclaration(expressionPath):
       throw 'unexpected operator'
 \end{minted}
 
-The sub-parser function \code{parseMockInteractionDeclaration} simply
+The sub-parser function \code{parseMockInteractionDeclaration} as shown below simply
 uses the left side of the binary expression as the \textit{cardinality}
-and parses the right side of the binary expression as a \textit{call}:
-\begin{minted}[fontsize=\footnotesize]{text}
+in line 5
+and parses the right side of the binary expression as a \textit{call}
+in line 3:
+\begin{minted}[linenos,fontsize=\footnotesize]{text}
 parseMockInteractionDeclaration(expressionPath):
   return
     mockObject, args = parseCall(expressionPath.get('right'))
@@ -71,14 +74,14 @@ parseMockInteractionDeclaration(expressionPath):
     cardinality = expressionPath.node.left
 \end{minted}
 
-The sub-parser function \code{parseStubInteractionDeclaration}
+The sub-parser function \code{parseStubInteractionDeclaration} as shown below
 behaves similarly for a pure stub interaction declaration,
-using the right side of the binary expression as the \textit{returnValue}
-and parsing the left side of the binary expression as a \textit{call}.
+using the right side of the binary expression as the \textit{returnValue} in line 10 or 15
+and parsing the left side of the binary expression as a \textit{call} in line 13.
 However, if the left side is a binary expression with operator \code{'*'},
 there is a combined interaction declaration on hand,
-and the left side is instead parsed as a mock interaction declaration:
-\begin{minted}[fontsize=\footnotesize]{text}
+and the left side is instead parsed as a mock interaction declaration in lines 7 to 8:
+\begin{minted}[linenos,fontsize=\footnotesize]{text}
 parseStubInteractionDeclaration(expressionPath):
   let leftPath = expressionPath.get('left')
   let returnValue = expressionPath.node.right
@@ -96,11 +99,11 @@ parseStubInteractionDeclaration(expressionPath):
     returnValue = returnValue
 \end{minted}
 
-The sub-parser function \code{parseCall}
-simply extracts the \textit{callee} as the \textit{mockObject}
-and the \textit{arguments} as the \textit{args}
+The sub-parser function \code{parseCall} as shown below
+simply extracts the \textit{callee} as the \textit{mockObject} in line 4
+and the \textit{arguments} as the \textit{args} in line 5
 from a \textit{CallExpression}:
-\begin{minted}[fontsize=\footnotesize]{text}
+\begin{minted}[linenos,fontsize=\footnotesize]{text}
 parseCall(expressionPath):
   if (expressionPath.isCallExpression())
     return

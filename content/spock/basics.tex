@@ -13,15 +13,18 @@ can contain assertions formed by simple expressions.
 An assertion passes if the expression evaluates to a truthy value
 and fails if it evaluates to a falsy value.
 Simple functional programming-style assertions
-usually look cleaner using the expect style;
+usually look cleaner using the expect style
+as shown in lines 2 to 5;
 code with side effects should be executed in a \code{when} block,
 followed by a \code{then} block verifying that
-the effects have resulted in the expected program state.
+the effects have resulted in the expected program state
+as shown in lines 16 to 26.
 It is also possible to assert that an exception
 has been thrown in the preceding \code{when} block using \code{thrown},
 which can be seen in the \code{when-then} example test case.
 
-The blocks \textit{setup} (with its alias \textit{given}) and \textit{cleanup}
+The blocks \textit{setup} (with its alias \textit{given}) and \textit{cleanup},
+as shown in lines 7 to 14,
 are offered to run code before and after the assertions.
 \code{cleanup} blocks are particularly useful because they are \textit{always} run,
 even if the previously executed blocks threw an exception.
