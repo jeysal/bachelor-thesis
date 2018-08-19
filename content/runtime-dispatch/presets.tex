@@ -1,0 +1,42 @@
+\section{Presets}
+With the runtime dispatch approach,
+mocking library presets
+each have to export the module name of an
+\textit{interactionRuntimeAdapter}.
+When interaction blocks are used,
+this module name will be used as the source
+for importing the adapter that accepts
+the generated declaration and verification calls.
+
+An interaction runtime adapter exports
+the \textit{declare} and \textit{verify}
+functions with the following type signatures:
+\begin{minted}{typescript}
+let declare: (
+  declaration: RuntimeInteractionDeclaration,
+) => void;
+let verify: (
+  mockObject: any
+) => void;
+\end{minted}
+Note that the \textit{RuntimeInteractionDeclaration} type
+of the \textit{declare} parameter is not the same
+as the \textit{InteractionDeclaration} type
+that the declaration parser has as its output type,
+which is called \textit{CompileTimeInteractionDeclaration}
+with this approach because of this distinction.
+Instead of the AST nodes of a
+\textit{CompileTimeInteractionDeclaration}, a
+\textit{RuntimeInteractionDeclaration} contains
+the actual runtime values of an interaction declaration.
+For example,
+its \textit{cardinality} is of type \textit{number} instead of \textit{Expression}
+and its \textit{mockObject} is of type \textit{any} instead of \textit{Expression}.
+
+Of course, the Sinon.JS and Jest mocking library presets
+do not contain the corresponding interaction processors themselves
+with this approach either.
+The \textit{interactionRuntimeAdapter} module names they export
+are those of the interaction runtime adapter packages
+\textit{@spockjs/interaction-runtime-adapter-sinon} and
+\textit{@spockjs/interaction-runtime-adapter-jest}.
