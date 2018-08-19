@@ -1,0 +1,43 @@
+\section{Interaction runtime adapter integration}
+With the runtime dispatch approach,
+the \textit{@spockjs/interaction-block} package
+--- apart from the parser ---
+looks very different and has to do a lot more work.
+
+One part that looks somewhat similar is
+the outer function:
+\begin{minted}[linenos,fontsize=\scriptsize]{typescript}
+export default (t: typeof BabelTypes, config: InternalConfig) => {
+  const {
+    hooks: { interactionRuntimeAdapter, interactionVerificationPostProcessors },
+  } = config;
+  const postProcessors = interactionVerificationPostProcessors.map(processor =>
+    processor(t, config),
+  );
+
+  if (!interactionRuntimeAdapter) {
+    throw new Error(/* ... */);
+  }
+
+  return {
+    declare, // ...
+    verify, // ...
+  };
+};
+\end{minted}
+Instead of ensuring there is at least one primary interaction processor,
+we now ensure that there is an interaction runtime adapter defined.
+
+One might notice that there are still some sort of interaction processors
+in this implementation, called \textit{interactionVerificationPostProcessors}.
+These are still required as a kind of replacement for
+the non-primary interaction processors from the direct compilation approach,
+because for example \textit{@spockjs/preset-runner-ava} needs to
+add a passing assertion after the mock verification
+because AVA makes tests fail if they run without performing an assertion through AVA.
+
+\subsection{Declaration serialization}
+TODO
+
+\subsection{Verification}
+TODO
