@@ -1,0 +1,18 @@
+\chapter{Runtime dispatch}
+In this chapter,
+we will develop alternative implementations
+of interaction blocks
+for the Sinon.JS and Jest mocking libraries
+as well as their integration into the Babel plugin
+in the \textit{@spockjs/interaction-block} package.
+Unlike the direct compilation method,
+interaction blocks always compile to the same calls,
+but the callee is a runtime adapter
+imported from a different package
+depending on which mocking library
+calls should be delegated to.
+Direct comparisons between this approach
+and the direct compilation approach
+are saved for the following chapter;
+this chapter merely describes the approach
+without evaluating it.
