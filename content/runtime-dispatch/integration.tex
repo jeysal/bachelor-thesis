@@ -37,7 +37,81 @@ add a passing assertion after the mock verification
 because AVA makes tests fail if they run without performing an assertion through AVA.
 
 \subsection{Declaration serialization}
-TODO
+The \textit{declare} function does quite a lot more
+than just delegating through with the runtime dispatch approach.
+After the usual AST structure checks and the call to the parser,
+we need to \textit{serialize} the compile-time interaction declaration
+to AST nodes that will create a runtime interaction declaration object
+to be passed to the interaction runtime adapter when the code is executed.
+Generating the adapter call is simple:
+\begin{minted}[linenos,fontsize=\footnotesize]{typescript}
+statementPath.replaceWith(
+  t.callExpression(
+    addNamed(
+      statementPath,
+      'declare',
+      interactionRuntimeAdapter,
+    ) as BabelTypes.Expression,
+    [t.objectExpression(interactionDeclarationProperties)],
+  ),
+);
+\end{minted}
+
+Babel provides helper functions to conveniently create imports
+in its \textit{babel-helper-module-imports} package.
+We use the \textit{addNamed} function to generate an import like
+\begin{minted}[fontsize=\footnotesize]{javascript}
+import {
+  declare,
+} from '@spockjs/interaction-runtime-adapter-example';
+\end{minted}
+in lines 3 to 7.
+Its return value is an expression evaluating to the imported value,
+which is the \textit{declare} function of the interaction runtime adapter,
+so we can generate a call to that function
+with a runtime interaction declaration as the argument in line 8.
+
+Obtaining the \textit{interactionDeclarationProperties} requires some more work.
+The first two properties are simple ---
+the \textit{kind} and \textit{args} property nodes
+are created according to the following pattern:
+\begin{minted}{typescript}
+t.objectProperty(
+  t.identifier('kind'),
+  t.stringLiteral(interactionDeclaration.kind),
+)
+\end{minted}
+A \textit{cardinality} property is added in the same way,
+but only if the interaction declaration
+is of type \textit{mock} or \textit{combined}.
+A \textit{returnValue} property is added in the same way,
+but only if the interaction declaration
+is of type \textit{stub} or \textit{combined}.
+
+Finally, the \textit{mockObject} property is a bit more complex.
+When implementing the first approach,
+we have already noticed that for the Sinon.JS mocking library
+we need to distinguish between member expressions
+and other expressions in the mock object,
+because the former must result in an \textit{expects} call to Sinon.JS.
+This distinction cannot be deferred to the runtime,
+because there is no way for the runtime adapter
+to find out how the \textit{mockObject} value
+passed in the runtime interaction declaration was obtained.
+
+So we introduce another property
+on the \textit{RuntimeInteractionDeclaration} types:
+The \textit{methodName}.
+If the mock object was specified as a member expression,
+the \textit{mockObject} property will only contain
+the object that the member access occurs on,
+while the \textit{methodName} property specifies
+the name of the member of that object.
+Otherwise, \textit{methodName} will be \code{undefined}.
+This distinction is implemented mostly in the same way
+as in the direct compilation approach;
+the full source code of \textit{@spockjs/interaction-block}
+can be found in the appendix.
 
 \subsection{Verification}
 TODO
