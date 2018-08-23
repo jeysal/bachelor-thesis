@@ -62,7 +62,8 @@ export default (t: typeof BabelTypes, config: InternalConfig) => {
   );
   if (!processors.some(({ primary }) => primary)) {
     throw new Error(
-      'Found an interaction declaration, but no preset defines a primary interactionProcessor.\n' +
+      'Found an interaction declaration, ' +
+        'but no preset defines a primary interactionProcessor.\n' +
         'You need to enable a preset for your mocking library.',
     );
   }

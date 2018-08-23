@@ -1,2 +1,33 @@
 \section{Jest}
-TODO
+To implement \textit{@spockjs/interaction-runtime-adapter-jest},
+we use the same custom interaction declaration management
+on top of the Jest mock primitive
+that we already developed with the direct compilation approach.
+We will not repeat the code here,
+as it is very similar to the template contents.
+The full code of this implementation is included in the appendix.
+
+One small difference is that the \textit{isMockFunction} check
+is converted from a negative condition with early return error handling
+to a positive condition with else block error handling.
+Because unlike the template literal, the adapter code can be type-checked,
+this allows \textit{isMockFunction} to act as a \textit{type guard}
+so the TypeScript type checker knows that
+the value must be a Jest mock inside the if block.
+
+We also need to incorporate some extra logic
+compared to the direct compilation approach,
+because the generic interaction block handler
+always rewrites declarations on a member expression
+with the \textit{methodName} property,
+not only when Sinon is used.
+Even though Jest does not need this special case,
+we have to handle it at the start of the \textit{declare} function:
+\begin{minted}[linenos]{typescript}
+const { args, methodName } = declaration;
+let { mockObject } = declaration;
+
+if (methodName != null) {
+  mockObject = mockObject[methodName];
+}
+\end{minted}
