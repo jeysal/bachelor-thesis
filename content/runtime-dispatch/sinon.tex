@@ -1,2 +1,57 @@
 \section{Sinon.JS}
-TODO
+To implement \textit{@spockjs/interaction-runtime-adapter-sinon},
+we use the same Sinon.JS (\textit{Sinon}) APIs
+as with the direct compilation approach,
+but because we are now operating at runtime,
+we can call them directly instead of generating code that does so.
+We can also simply branch to handle
+different kinds of interaction declarations and mock objects
+instead of building templates for all combinations.
+
+The following code implements the \textit{declare} function of the adapter:
+\begin{minted}[linenos,fontsize=\scriptsize]{typescript}
+declaration => {
+  let mock = declaration.mockObject;
+
+  const { methodName } = declaration;
+  if (methodName != null) {
+    mock = mock.expects(methodName);
+  }
+  mock = mock.withArgs(...declaration.args);
+
+  if (declaration.kind === 'mock' || declaration.kind === 'combined') {
+    const { cardinality } = declaration;
+    mock = mock.atLeast(cardinality).atMost(cardinality);
+  }
+
+  if (declaration.kind === 'stub' || declaration.kind === 'combined') {
+    mock = mock.returns(declaration.returnValue);
+  }
+};
+\end{minted}
+In lines 4 to 7, we handle mock objects with methods in Sinon
+by calling the \textit{expects} function if
+the \textit{methodName} declaration property
+that we introduced for this special case is set.
+In line 8, we restrict the call matching
+to calls with the correct arguments as specified in the declaration.
+In lines 10 to 17,
+depending on the declaration kind,
+we tell Sinon to expect a certain number of matching calls,
+or to stub the return values on call, or to do both.
+The \textit{verify} function is as simple as:
+\begin{minted}[linenos,fontsize=\scriptsize]{typescript}
+mock => {
+  mock.verify();
+};
+\end{minted}
+
+Additionally, we could introduce checks in the future to ensure
+that given mock objects are really Sinon mocks
+--- especially now that performing additional steps at runtime
+does not require adding code to a template to
+insert them at every interaction block ---
+and throw an error with a helpful message if this is not the case
+instead of the obscure type errors that the adapter might run into
+if a user mistakenly attempts to declare or verify interactions
+on a value that is not a Sinon mock.
