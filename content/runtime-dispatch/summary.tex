@@ -1,0 +1,14 @@
+\section{Summary}
+In this chapter,
+we implemented interaction block handling
+using our second approach,
+in which the generated code does not depend
+on the mocking library in use,
+expect for the runtime adapter
+handling the interaction declarations and verifications,
+which can be swapped to use different mocking libraries.
+
+The library-independent part did a lot more work with this approach,
+but in turn developing individual library adapters became easier.
+Adding to that, much of the library-specific code from the first approach
+could be reused with slight modifications.

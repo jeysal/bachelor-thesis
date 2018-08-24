@@ -1,0 +1,14 @@
+\section{Summary}
+In this chapter,
+we implemented interaction block handling
+with the backing mocking libraries Sinon and Jest
+using the first of our two conceived approaches.
+
+With this approach,
+library-specific \textit{interaction processors} do most of the work,
+using \textit{babel-template},
+which we also learned about in this chapter,
+to generate chunks of code
+that call APIs provided by the mocking library
+and optionally performing arbitrary additional computations,
+such as in the case of Jest.
