@@ -1,0 +1,18 @@
+\section{Information loss}
+TODO natural (no access to AST at runtime) - unless explicitly preserved, which is possible to different degrees:
+TODO    1. "mockName": "(0 || mock)"
+TODO    2. serialize mockObject AST node, can be printed or used in other ways at runtime
+TODO    3. serialize the whole fkin declaration subtree
+TODO self-inflicted (unfolding cardinality: if '2*fn()' becomes '1*fn();1*fn()')
+TODO    if one mocking library requires this because of missing cardinality support, better unfold at runtime, or we can't use atLeast/atMost
+
+TODO Solutions:
+TODO self inflicted is always avoidable, just a matter of designing the right abstractions / data structures
+TODO direct compilation avoids natural entirely, if we need the information that is naturally lost a lot, runtime dispatch requires extra serialization effort for all of that
+TODO but before those natural infos become necessary, runtime dispatch is a lot easier for us as developers
+TODO hybrids possible, processors that hook into *how* a runtime adapter call is generated at runtime, serializing additional compile-time info and doing stuff with it directly or passing it to the adapter
+TODO moreover, mixing possible:
+TODO    make the runtime adapter approach impl of interaction-block just another "processor" in the direct compilation approach.
+TODO    -> Sinon can just specify its interaction-processor-sinon-mocks directly
+TODO    -> Jest can specify the serializing, to-runtime-delegating processor and pass its interaction-runtime-adapter-jest as an argument to the processor
+TODO    this way, runtime dispatch is kind of embedded into direct compilation

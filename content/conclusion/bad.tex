@@ -1,0 +1,4 @@
+\section{Runtime dispatch: The bad}
+TODO as far as spockjs development experience goes, there's also a negative thing: integration tests need one more transpilation step resulting in even more complexity: jest transforms tests with spockjs (self hosting), which requires transpilation of spockjs itself first. now to execute the runtime adapter, the test runner instance spawned by integration test aside from transforming the test file with Babel/spockjs also needs to be able to transpile the runtime adapter that is imported
+TODO escape hatch still keeps adapter. otherwise at least for stuff without complex logic (e.g. Sinon) codemod would stay good
+TODO error messages with original code not possible, unless serializing even more of the AST into code

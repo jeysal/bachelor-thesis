@@ -1,0 +1,7 @@
+\section{Runtime dispatch: The good}
+TODO way better dev experience, incl. e.g. type checking
+TODO   with stuff like Jest, this is *really* bad, need lots of complex logic
+TODO   loops for implementing cardinality, ... scary
+TODO   desired future features might add way more complexity: ordered mock expectations, improved error messages (eww nested template strings)
+TODO   easier to write code *well*, e.g. proper usage of symbols -> can easily hold global state in the module, otherwise only per file and even that only with annoying Babel scope management to generate the code safely
+TODO   workaround might be possible: put it into extra file, parse it as function, print it and call it with the substitutions as arguments. at that point, might as well use runtime dispatch...
