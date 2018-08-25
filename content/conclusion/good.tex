@@ -1,7 +1,70 @@
 \section{Runtime dispatch: The good}
-TODO way better dev experience, incl. e.g. type checking
-TODO   with stuff like Jest, this is *really* bad, need lots of complex logic
-TODO   loops for implementing cardinality, ... scary
-TODO   desired future features might add way more complexity: ordered mock expectations, improved error messages (eww nested template strings)
-TODO   easier to write code *well*, e.g. proper usage of symbols -> can easily hold global state in the module, otherwise only per file and even that only with annoying Babel scope management to generate the code safely
-TODO   workaround might be possible: put it into extra file, parse it as function, print it and call it with the substitutions as arguments. at that point, might as well use runtime dispatch...
+The runtime dispatch approach
+provides a significantly better experience
+for development of spockjs itself,
+making it easier to maintain and scale.
+Writing most of the library-specific code
+in interaction processor template strings
+gets cumbersome rather quickly,
+while interaction runtime adapter code
+can be written and type-checked
+like any other spockjs code,
+barely even revealing that
+it is executed at test runtime
+instead of test compile time.
+
+For mocking libraries like Jest,
+that do not provide APIs
+implementing sufficient interaction matching,
+thus requiring us to implement much of it ourselves,
+lackluster developer experience (\textit{DX})
+can rapidly become a limiting factor to both quantity and quality
+of the functionality that we can provide for those libraries.
+
+It was already annoying to implement
+the cardinality checks in Jest mock verification.
+Imagine implementing and debugging an algorithm
+to match \textit{ordered} mock expectations
+in the templates of an interaction processor.
+Imagine adding improved error messages for
+all kinds of mistakes users of spockjs might make
+using nested template strings
+with escaped characters all over.
+In a runtime adapter,
+these tasks can be performed
+using plain TypeScript code.
+
+It is also easier to write the code \textit{well} this way.
+For instance, while both approaches use \textit{Symbols} \autocite{MdnSymbol}
+to `hide' interaction declarations inside a Jest mock instance,
+the direct compilation approach uses
+a named Symbol retrieved by the code
+\code{Symbol.for('spockjs...')}
+to access the declarations everywhere,
+while the runtime adapter approach can just
+generate a \code{Symbol()} once and use that
+to access the declarations everywhere,
+giving it a Symbol that is guaranteed to be unique,
+which is arguably a cleaner way that follows best practices.
+
+If this were a requirement to be implemented with the direct compilation approach,
+which does not have the ability to easily hold global state
+like a runtime adapter does in the top-level scope of its module,
+we would need to either generate a Symbol constant
+into the top-level scope of each test file
+--- which is easily done using Babel,
+but ceases to work if a mock object is passed around across test files
+because they would each have their own distinct Symbol ---
+or we would need to store the Symbol itself
+somewhere in the global scope,
+which is not really cleaner or safer than using a named symbol
+as is being done in the current direct compilation implementation.
+
+To improve upon the general spockjs DX issues of direct compilation,
+it might be viable to build advanced infrastructure
+that allows us to move template contents into separate files
+that can be type-checked and otherwise used regularly in development,
+transform those, parse them as templates and perform the substitutions.
+The viability of such intricate infrastructure extensions
+is questionable compared to using runtime dispatch right away,
+which appears to be the cleaner concept for optimizing the DX.
