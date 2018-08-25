@@ -1,18 +1,61 @@
 \section{Information loss}
-TODO natural (no access to AST at runtime) - unless explicitly preserved, which is possible to different degrees:
-TODO    1. "mockName": "(0 || mock)"
-TODO    2. serialize mockObject AST node, can be printed or used in other ways at runtime
-TODO    3. serialize the whole fkin declaration subtree
-TODO self-inflicted (unfolding cardinality: if '2*fn()' becomes '1*fn();1*fn()')
-TODO    if one mocking library requires this because of missing cardinality support, better unfold at runtime, or we can't use atLeast/atMost
+During compilation of tests with the spockjs Babel plugin,
+we naturally incur some information loss.
+At runtime, we will no longer have access to the AST data.
+If we need to access that data,
+for example to print better error messages,
+we have to explicitly preserve the information during compilation,
+which can be done to different degrees, such as
+\begin{itemize}
+  \item serializing pieces of information
+    as they are needed at runtime, e.g.
+    \code{"mockName": "(0 || mock)"},
+  \item serializing the \textit{mockObject} AST node,
+    which can be printed or used in other ways at runtime, and
+  \item serializing the entire interaction declaration subtree
+    for maximum information preservance,
+    which is usually overkill and can have
+    a noticeable performance impact.
+\end{itemize}
 
-TODO Solutions:
-TODO self inflicted is always avoidable, just a matter of designing the right abstractions / data structures
-TODO direct compilation avoids natural entirely, if we need the information that is naturally lost a lot, runtime dispatch requires extra serialization effort for all of that
-TODO but before those natural infos become necessary, runtime dispatch is a lot easier for us as developers
+We also need to be wary about self-inflicted information loss.
+Suppose that Sinon had no
+\textit{atLeast} and \textit{atMost} functions
+for specifying cardinality \textit{n},
+instead requiring users to
+register the same mock expectation \textit{n} times.
+The correct handling of this situation would be
+to loop \textit{n} times at runtime
+to register those expectations with Sinon.
+If we instead decided to unfold the declarations at compile time so that
+\code{2 * fn()} becomes the same as \code{1 * fn(); 1 * fn()}
+in our internal declaration data structure,
+we could no longer use any opportunity
+to specify the cardinality directly
+offered by other mocking libraries,
+and we would be forced to always use complex queueing declaration semantics
+as described in Chapter~\ref{chap:Interaction},
+including for our own declaration matching implementations
+such as the Jest adapter.
+Deferring the computation of derived data representations to runtime
+can save us from a lot of trouble.
+
+The kind of self-inflicted information loss we described here is always avoidable;
+it is just a matter of designing the right abstractions and data structures.
+The natural information loss during compilation
+is avoided entirely with the direct compilation approach
+by doing all the work at compile time straight away;
+if we urgently need the naturally lost information,
+the runtime dispatch approach requires
+extra serialization effort for all of this information.
+As long as we do not need large parts of this information though,
+runtime dispatch is a lot easier to handle for us developers.
+
 TODO hybrids possible, processors that hook into *how* a runtime adapter call is generated at runtime, serializing additional compile-time info and doing stuff with it directly or passing it to the adapter
 TODO moreover, mixing possible:
 TODO    make the runtime adapter approach impl of interaction-block just another "processor" in the direct compilation approach.
 TODO    -> Sinon can just specify its interaction-processor-sinon-mocks directly
 TODO    -> Jest can specify the serializing, to-runtime-delegating processor and pass its interaction-runtime-adapter-jest as an argument to the processor
 TODO    this way, runtime dispatch is kind of embedded into direct compilation
+
+TODO perhaps connect this to how projects should decide what to do at compile time / runtime based on what information they need?
