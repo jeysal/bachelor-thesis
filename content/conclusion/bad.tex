@@ -1,4 +1,65 @@
 \section{Runtime dispatch: The bad}
-TODO as far as spockjs development experience goes, there's also a negative thing: integration tests need one more transpilation step resulting in even more complexity: jest transforms tests with spockjs (self hosting), which requires transpilation of spockjs itself first. now to execute the runtime adapter, the test runner instance spawned by integration test aside from transforming the test file with Babel/spockjs also needs to be able to transpile the runtime adapter that is imported
-TODO escape hatch still keeps adapter. otherwise at least for stuff without complex logic (e.g. Sinon) codemod would stay good
-TODO error messages with original code not possible, unless serializing even more of the AST into code
+As far as spockjs DX is concerned,
+there is also one negative aspect to be remarked about runtime dispatch.
+The spockjs integration tests now need yet another transpilating step,
+resulting in even more complexity in the development setup.
+In addition to transforming the spockjs test files with spockjs itself
+(which is necessary because spockjs is \textit{self-hosting}
+in that its very own tests use spockjs blocks as well),
+transforming the spockjs TypeScript source files
+in order to perform aforesaid transformation, and
+transforming test files in the spawned test runner child process
+(because \textit{integration} tests always perform
+a full test runner execution like a user would),
+we now also need the spawned child process
+to be capable of compiling TypeScript on-the-fly
+in the runtime adapter modules imported by the test files.
+
+As confusing as this may sound,
+it is somewhat specific to the spockjs development infrastructure,
+it is not an unsolvable problem in development, and
+it does not arise at all in production,
+where the spockjs TypeScript source code is transpiled ahead-of-time.
+To see how the the various transpilation steps
+used during spockjs development are set up,
+refer to the top-level and integration test directories of spockjs.
+\autocite{SpockjsGithubRuntimeDispatch}
+
+A more significant downside to the runtime adapter approach is
+that the automated escape hatch
+for users who want to stop using spockjs
+mentioned in Chapter~\ref{chap:Interaction}
+can no longer be used to obtain test files
+that work completely independent of spockjs.
+With the direct compilation approach,
+at least for test runners like Sinon,
+the escape hatch will just
+replace the interaction blocks
+with the corresponding Sinon API calls.
+Even for Jest, it will produce working tests
+by inserting all of the interaction matching logic all over the tests,
+although that of course does not
+leave the tests in a maintainable state.
+With the runtime adapter approach,
+the escape hatch will leave the tests
+with imports and calls to
+a spockjs interaction runtime adapter in them,
+which some may still consider valuable
+because the tests no longer need
+a transformation step for spockjs blocks,
+but it does not fully meet
+the purpose of the escape hatch,
+that is removing all traces of spockjs
+as if it was never used.
+
+While the runtime dispatch approach is arguably
+more comfortable for spockjs development,
+it lags behind a bit in
+achieving great user experience (\textit{UX}).
+Showing a snippet of the original code in an error message,
+like the direct compilation Jest interaction processor does,
+is not possible in a runtime adapter
+unless we serialize some more information from the AST
+in the library-agnostic interaction block handling routine.
+This leads us to the more general problem space
+of information loss during transition from compile time to runtime.
