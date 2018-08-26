@@ -1,3 +1,38 @@
 \section{Spockjs}
-TODO use runtime dispatch for now, pull some stuff to compile time for hybrid approach once it's really necessary
-TODO snapshots kind of the same abstraction (though simpler)
+Every project that needs to
+generate a lot of complex code at compile time
+will need to make the decision
+whether do defer this work to runtime.
+As a guiding principle,
+setting aside other considerations
+like compilation and runtime performance cost,
+which may be highly relevant in some other contexts,
+we recommend basing this choice
+on the amount of required information
+that is contained in the AST
+but is not present at runtime,
+because every such piece of information
+will necessitate more serialization effort
+to transfer it from compile time to runtime,
+adding more complexity to the low baseline
+of implementations like our runtime dispatch.
+
+In spockjs,
+we will go with the cleaner runtime dispatch approach for now,
+eventually pulling out some parts of the logic to compile time
+and going some of the way towards a hybrid approach
+once the small improvements that require compile-time information
+have accumulated and gotten out of hand.
+
+Other future features of spockjs,
+such as the snapshot testing blocks
+with support for the snapshot implementations of multiple test runners,
+will require the same kind of abstraction
+that we built for mocking libaries,
+albeit with much less complexity.
+We will use our findings in this paper
+to estimate the complexity of
+compile time-centric versus runtime-centric
+approaches to implementing those features
+without fully implementing all of the approaches
+like we did for interaction testing support.
