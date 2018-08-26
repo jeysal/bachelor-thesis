@@ -5,7 +5,10 @@ on top of the Jest mock primitive
 that we already developed with the direct compilation approach.
 We will not repeat the code here,
 as it is very similar to the template contents.
-The full code of this implementation is included in the appendix.
+The full source code of this implementation,
+along with test cases for both implementation approaches
+of Jest-backed spockjs interaction blocks,
+is included in the appendix.
 
 One small difference is that the \textit{isMockFunction} check
 is converted from a negative condition with early return error handling
@@ -31,3 +34,10 @@ if (methodName != null) {
   mockObject = mockObject[methodName];
 }
 \end{minted}
+Afterwards, the \textit{mockObject} will be
+the evaluated result of the entire expression again,
+regardless of whether it was disassembled as a member expression,
+or directly passed to us as a generic expression.
+We continue the rest of the \textit{declare} function,
+as well as the \textit{verify} function,
+with essentially the same code as in the direct compilation approach.
