@@ -31,6 +31,14 @@ export default (t: typeof BabelTypes, config: InternalConfig) => {
 }
 \end{minted}
 
+Because there may be auxiliary interaction processors
+in addition to the single usual primary processor,
+we allow the configured presets to specify an array
+of more than one interaction processor.
+All specified interaction processors
+will be applied to interaction declarations and verifications
+and all of the AST nodes they generate will be inserted sequentially.
+
 The \textit{declare} function as shown below
 first ensures that the interaction declaration block
 has the expected structure of a binary expression statement

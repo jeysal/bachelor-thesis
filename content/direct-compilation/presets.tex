@@ -32,9 +32,11 @@ as we will see when finishing the implementation of that package soon.
 
 The interaction processor property \textit{primary} indicates
 whether the processor is meant for standalone use (\code{true}),
-as is the case for those implementing mocking library bindings,
-or it is an auxiliary processor (\code{false}),
-such as one that provides better integration with a test runner.
+as is the case for processors implementing mocking library bindings,
+which we deal with in this paper,
+or an auxiliary processor (\code{false}),
+such as one that provides better integration with a test runner,
+which we disregard in this paper.
 Users will see an error when attempting to use interaction blocks
 without a primary interaction processor.
 

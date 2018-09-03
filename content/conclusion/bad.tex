@@ -1,16 +1,19 @@
 \section{Runtime dispatch: The bad}
 As far as spockjs DX is concerned,
 there is also one negative aspect to be remarked about runtime dispatch.
-The spockjs integration tests now need yet another transpilating step,
+The spockjs integration tests now need yet another transpilation step,
 resulting in even more complexity in the development setup.
-In addition to transforming the spockjs test files with spockjs itself
-(which is necessary because spockjs is \textit{self-hosting}
-in that its very own tests use spockjs blocks as well),
-transforming the spockjs TypeScript source files
-in order to perform aforesaid transformation, and
-transforming test files in the spawned test runner child process
-(because \textit{integration} tests always perform
-a full test runner execution like a user would),
+In addition to
+\begin{itemize}
+  \item transforming the spockjs test files with spockjs itself
+    (which is necessary because spockjs is \textit{self-hosting}
+    in that its very own tests use spockjs blocks as well),
+  \item transforming the spockjs TypeScript source files
+    in order to perform aforesaid transformation, and
+  \item transforming test files in the spawned test runner child process
+    (because \textit{integration} tests always perform
+    a full test runner execution like a user would),
+\end{itemize}
 we now also need the spawned child process
 to be capable of compiling TypeScript on-the-fly
 in the runtime adapter modules imported by the test files.

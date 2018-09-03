@@ -24,6 +24,11 @@ we can assume that it is such a mock object
 and need to make sure that
 we generate the proper \code{expects} call
 like in the example above.
+For plain mock functions,
+we can skip the \code{expects}:
+\begin{minted}{javascript}
+mockFunc.once().throws();
+\end{minted}
 
 In the following,
 we will focus on the most complex case:
@@ -46,10 +51,10 @@ along with test cases that verify
 the behavior of spockjs in conjunction with Sinon
 for both implementation approaches.
 
-\subsection{Declaration}
+\subsection{Declaration}\setminted{samepage=no}
 The \textit{declare} function for this case starts by
 checking whether the interaction declaration is of type \textit{combined} in line 4,
-whether the mock object is a member expression in line 7, and
+checking whether the mock object is a member expression in line 7, and
 extracting the data from the declaration and member expression
 in lines 2 and 5 and 8 to 12:
 \begin{minted}[linenos]{typescript}
@@ -131,7 +136,7 @@ so even though parts of the API --- like \textit{withArgs} --- are identical,
 it would be awkward to treat them as the same thing
 and just plug in function calls to our liking.
 
-\subsection{Verification}
+\setminted{samepage}\subsection{Verification}
 We recorded all declarations by
 converting them into a format understood by Sinon
 and passing them to the Sinon mock object API.

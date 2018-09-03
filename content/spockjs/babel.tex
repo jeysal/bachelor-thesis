@@ -70,7 +70,7 @@ and performs the transformation as already explained there.
 Visitor methods receive \textit{path} objects when they are called while the AST is traversed.
 Unlike nodes, which almost exactly reflect the node objects as defined by ESTree,
 paths are aware of their context in the tree and, in particular, their parents.
-This means that while a path could be used to reach and manipulate any part of the tree,
+This means that while a path can be used to reach and manipulate any part of the tree,
 including those above the corresponding node,
 a node can only be used to inspect and manipulate its children.
 
@@ -79,13 +79,21 @@ so let us now take a quick look at the more powerful path objects,
 covering only a select few of their many functions that are relevant to spockjs.
 
 To retrieve child paths, \code{get} can be used,
-specifying the property access path that would be taken on a node as a string argument:
+specifying the same property access path
+that would be taken on a node as a string argument.
+The following example describes the path navigations using \code{get} on the left
+by comparing them to their corresponding node navigations on the right:
 \begin{minted}{javascript}
-path.node.left === path.get('left').node
-path.node.body[0] === path.get('body.0').node
+path.get('left').node   === path.node.left
+path.get('body.0').node === path.node.body[0]
 \end{minted}
+While there is no reason to use the more cumbersome path navigation in this example,
+we need to use it if we want to call methods on the child path,
+some of which are named in the following.
+There is no way to recover the path object
+if we only have its corresponding node object.
 
-Spockjs also frequently uses the \code{replace} method,
+Spockjs frequently uses the \code{replace} method,
 which discards the entire node that belongs to the path
 and replaces it with a given node,
 and its sibling method \code{replaceWithMultiple},

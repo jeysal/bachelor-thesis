@@ -141,7 +141,7 @@ class Identifier implements Node {
 }
 
 class Literal implements Node {
-  handle(v: Visitor) {
+  accept(v: Visitor) {
     v.visitLiteral(this);
   }
 }

@@ -4,13 +4,6 @@ The label name may be either \textit{mock} or \textit{stub},
 with no technical distinction being made between those two ---
 although users are, of course, urgently reminded not to use them inappropriately.
 
-The body of such a labeled statement
---- or, in the case of a block statement, each statement contained within it ---
-may have the shape of a \textit{Mock-}, \textit{Stub-}, or \textit{CombinedInteractionDeclaration}
-as shown in Figure~\ref{fig:InteractionBlockVariants}.
-The multiplication and right shift operators are the same
-that the Spock Framework uses for interaction declarations.
-
 \begin{figure}
   {\color{teal}
     \begin{minted}{text}
@@ -35,19 +28,13 @@ cardinality * call >> returnValue;
   }\label{fig:InteractionBlockVariants}
 \end{figure}
 
-Figure~\ref{fig:InteractionBlockAst} shows the corresponding AST structure
-for all three variants, distinguished by color.
-The terminal nodes we need to extract are
-\begin{itemize}
-  \item the \textit{mockObject},
-  \item the \textit{args},
-  \item the \textit{cardinality} (for mock interactions), and
-  \item the \textit{returnValue} (for stub interactions).
-\end{itemize}
-The \textit{mockObject} and the \textit{args} always appear
-in the same \code{CallExpression} \textit{call}
-that is shown in Figure~\ref{fig:InteractionBlockCallAst},
-although that call may be attached to three different sections of the AST.
+The body of such a labeled statement
+--- or, in the case of a block statement, each statement contained within it ---
+may have the shape of a \textit{Mock-}, \textit{Stub-}, or \textit{CombinedInteractionDeclaration}
+as shown in Figure~\ref{fig:InteractionBlockVariants}.
+The multiplication and right shift operators
+used in those interaction declarations are the same
+that the Spock Framework uses for interaction declarations.
 
 \begin{figure}
   \centering \setminted{fontsize=\footnotesize}
@@ -64,7 +51,7 @@ although that call may be attached to three different sections of the AST.
     [  {\color{teal}Expression \code{cardinality}}\\{\color{magenta}CallExpression \code{call}}\\{\color{violet}BinaryExpression (operator: \code{*})}, edge label={node[midway,left]{\code{left}}}
     [   {\color{violet}Expression \code{cardinality}}, edge=violet, edge label={node[midway,left]{\code{left}}}]
     [   {\color{violet}CallExpression \code{call}}, edge=violet, edge label={node[midway,right]{\code{right}}}]]
-    [  {\color{teal}CallExpression \code{call}}\\{\color{magenta}Expression \code{returnValue}}, edge label={node[midway,right]{\code{right}}}]]]
+    [  {\color{teal}CallExpression \code{call}}\\{\color{magenta}Expression \code{returnValue}}\\{\color{violet}Expression \code{returnValue}}, edge label={node[midway,right]{\code{right}}}]]]
   \end{forest}
   \caption{
     The AST of a Mock-, Stub-, or CombinedInteractionDeclaration,
@@ -89,7 +76,25 @@ although that call may be attached to three different sections of the AST.
   }\label{fig:InteractionBlockCallAst}
 \end{figure}
 
-In addition to these interaction declaration blocks,
+Figure~\ref{fig:InteractionBlockAst} shows the corresponding AST structure
+for all three variants, distinguished by color.
+Later in this chapter, we will build a parser that can extract
+the interesting parts of a declaration AST
+that can be used to generate mocking library calls
+that represent the given interaction declarations.
+The terminal nodes we need to extract are
+\begin{itemize}
+  \item the \textit{mockObject},
+  \item the \textit{args},
+  \item the \textit{cardinality} (for mock interactions), and
+  \item the \textit{returnValue} (for stub interactions).
+\end{itemize}
+The \textit{mockObject} and the \textit{args} always appear
+in the same \code{CallExpression} \textit{call}
+that is shown in Figure~\ref{fig:InteractionBlockCallAst},
+although that call may be attached to three different sections of the AST.
+
+In addition to interaction declaration blocks,
 there are also interaction verification blocks
 that are used to verify that the declared calls on a mock
 have actually occurred:
