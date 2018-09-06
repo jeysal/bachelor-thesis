@@ -74,14 +74,19 @@ and to suggest some material for future experimentation,
 we will briefly mention some of that functionality.
 
 Stubbing and mocking can be combined
-within an interaction declaration.
+within an interaction declaration:
+\begin{minted}{groovy}
+1 * subscribe0.receive("msg") >> true
+\end{minted}
 This way, the test can both assert that
-a method call has occurred and
+a method call occurs in the \code{when} block and
 stub a return value for that same call.
 Declaring the stub and mock interactions separately
 will not result in the desired behavior ---
-only one interaction declaration will be matched.
+only one interaction declaration will be matched when the call occurs,
 \autocite[Chapter: Interaction Based Testing - Combining Mocking and Stubbing]{SpockFrameworkDoc}
+so either the call will return the default value as if there was no stubbing or
+the mock will fail to record the call for verification.
 
 Other features include
 \autocite[Chapter: Interaction Based Testing]{SpockFrameworkDoc}
