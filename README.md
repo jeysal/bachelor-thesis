@@ -22,7 +22,7 @@ compile time and runtime.
 
 ## PDF
 
-[https://jeysal.github.io/bachelor-thesis/index.pdf](https://jeysal.github.io/bachelor-thesis/index.pdf)
+[https://jeys.al/bachelor-thesis/index.pdf](https://jeys.al/bachelor-thesis/index.pdf)
 
 ## License
 
